@@ -61,6 +61,7 @@
         .btn-tg { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.1); }
         .btn-accent { background: var(--accent); color: white; }
         .btn-danger { background: var(--danger); color: white; }
+        .btn-success { background: var(--success); color: #000; }
         .btn-main:active { transform: scale(0.97); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -129,8 +130,8 @@
         .log-action { color: #fff; }
         .log-time { color: #666; font-size: 0.7rem; }
         
-        .admin-controls { display: flex; gap: 10px; margin-bottom: 20px; }
-        .admin-controls button { flex: 1; padding: 12px; font-size: 0.8rem; }
+        .admin-controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .admin-controls button { flex: 1; padding: 12px; font-size: 0.8rem; min-width: 120px; }
 
         .progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 10px; }
         .progress-fill { height: 100%; background: var(--accent); transition: width 0.3s; }
@@ -151,13 +152,17 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
         .warning-banner { background: rgba(255, 100, 100, 0.15); border: 1px solid #ff6666; border-radius: 12px; padding: 12px; margin-bottom: 15px; font-size: 0.75rem; color: #ffaaaa; display: flex; align-items: center; gap: 10px; }
-        .warning-banner i { font-size: 1rem; }
+        
+        .top-servers-list { margin-top: 20px; background: rgba(0,0,0,0.3); border-radius: 20px; padding: 15px; }
+        .top-server-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .top-server-item:last-child { border-bottom: none; }
+        .copy-config-btn { background: var(--accent); border: none; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.7rem; cursor: pointer; margin-left: 10px; }
+        .copy-config-btn:active { transform: scale(0.95); }
     </style>
 </head>
 <body>
     <div class="bg-gradient"></div>
 
-    <!-- Toast-уведомление -->
     <div class="toast" id="toast">
         <i class="fa-solid fa-circle-check"></i>
         <span>Конфиг скопирован!</span>
@@ -273,12 +278,20 @@
             <button id="toggleMaintenanceBtn" class="btn btn-accent" style="margin: 0;">
                 <i class="fa-solid fa-wrench"></i> ТЕХ. РАБОТЫ
             </button>
+            <button id="postPingsBtn" class="btn btn-success" style="margin: 0; background: var(--success); color: #000;">
+                <i class="fa-solid fa-paper-plane"></i> ВЫЛОЖИТЬ ПИНГИ
+            </button>
             <button id="backToUserBtn" class="btn btn-tg" style="margin: 0;">
                 <i class="fa-solid fa-arrow-left"></i> ВЫЙТИ
             </button>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="stat-card" style="margin-bottom: 20px;">
+            <div class="stat-val" id="autoPostStatus">⏰ 30 мин</div>
+            <div style="font-size: 0.65rem; color: #8f8f9e; font-weight: 800; margin-top: 5px;">АВТОПОСТИНГ ПИНГОВ</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
             <div class="stat-card">
                 <div class="stat-val" id="totalClicks">0</div>
                 <div style="font-size: 0.65rem; color: #8f8f9e; font-weight: 800; margin-top: 5px;">ВСЕГО ЗАПРОСОВ</div>
@@ -287,6 +300,11 @@
                 <div class="stat-val" id="totalUsers">0</div>
                 <div style="font-size: 0.65rem; color: #8f8f9e; font-weight: 800; margin-top: 5px;">БАЗА РАССЫЛКИ</div>
             </div>
+        </div>
+
+        <div class="top-servers-list" id="topServersPreview">
+            <p style="font-size: 0.7rem; color: var(--accent); margin-bottom: 10px;">🏆 ТОП-4 СЕРВЕРА (БЕЗ РОССИИ)</p>
+            <div id="previewList">Нажмите "ВЫЛОЖИТЬ ПИНГИ" для предпросмотра</div>
         </div>
 
         <div class="broadcast-tool">
@@ -329,6 +347,7 @@
     <script>
         const BOT_TOKEN = '8823340692:AAFx8VoHnK7kR310x5qiCOYDYGNnwztzTOg';
         const CH_USER = '@BlackBeltVPN';
+        const CHANNEL_ID = '@BlackBeltVPN'; // ID канала для постинга
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.headerColor = '#050508';
@@ -339,6 +358,7 @@
         let isMaintenanceMode = false;
         let allLogs = [];
         let SERVERS = [];
+        let autoPostInterval = null;
 
         const CONFIGS_URL = 'https://gist.githubusercontent.com/gitkitSnowy/c50e7bf14739ff9c6fdfd0ed0df7bfe1/raw/configs.txt';
 
@@ -352,13 +372,13 @@
             }, 2500);
         }
 
+        // Реальный пинг
         async function realPing(ip, port = 443) {
             const start = Date.now();
-            const url = `https://${ip}:${port}/`;
             try {
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 3000);
-                await fetch(url, { method: 'HEAD', mode: 'no-cors', signal: controller.signal });
+                await fetch(`https://${ip}:${port}/`, { method: 'HEAD', mode: 'no-cors', signal: controller.signal });
                 clearTimeout(timeoutId);
                 const ping = Date.now() - start;
                 return { ping: ping < 3000 ? ping : null, online: ping < 3000 };
@@ -446,6 +466,140 @@
             }
         }
 
+        // Получить топ-4 сервера без России
+        async function getTop4ServersWithoutRussia() {
+            const serversWithoutRussia = SERVERS.filter(s => s.region !== 'ru');
+            const pingResults = [];
+            
+            for (const server of serversWithoutRussia) {
+                const result = await checkPing(server.ip, server.port);
+                pingResults.push({ server, ping: result.ping, online: result.online });
+            }
+            
+            const onlineServers = pingResults.filter(p => p.online);
+            onlineServers.sort((a, b) => (a.ping || 999) - (b.ping || 999));
+            
+            return onlineServers.slice(0, 4);
+        }
+
+        // Сформировать сообщение для поста
+        function formatPostMessage(topServers) {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+            const dateStr = now.toLocaleDateString('ru-RU');
+            
+            let message = `🏆 *Актуальные серверы BlackBeltVPN* 🏆\n\n`;
+            message += `📅 ${dateStr} | ⏰ ${timeStr}\n`;
+            message += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            
+            for (let i = 0; i < topServers.length; i++) {
+                const item = topServers[i];
+                const pingIcon = item.ping < 50 ? '🟢' : (item.ping < 100 ? '🟡' : '🔴');
+                message += `${i+1}. *${item.server.name}* ${item.server.flag}\n`;
+                message += `   ${pingIcon} Пинг: \`${item.ping}ms\`\n`;
+                message += `   📋 \`${item.server.config}\`\n`;
+                if (i < topServers.length - 1) message += `\n`;
+            }
+            
+            message += `\n━━━━━━━━━━━━━━━━━━━━━━\n`;
+            message += `💡 *Как использовать:*\n`;
+            message += `1️⃣ Скопируйте конфиг\n`;
+            message += `2️⃣ Откройте Hiddify/v2rayNG\n`;
+            message += `3️⃣ Добавьте из буфера обмена\n\n`;
+            message += `✨ *BlackBeltVPN — всегда бесплатно!* ✨`;
+            
+            return message;
+        }
+
+        // Отправить пост в канал
+        async function postPingsToChannel() {
+            try {
+                const topServers = await getTop4ServersWithoutRussia();
+                if (topServers.length === 0) {
+                    showToast('❌ Нет доступных серверов!', true);
+                    return false;
+                }
+                
+                const message = formatPostMessage(topServers);
+                
+                // Отправляем через Telegram Bot API
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHANNEL_ID,
+                        text: message,
+                        parse_mode: 'Markdown',
+                        disable_web_page_preview: true
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.ok) {
+                    showToast('✅ Пост опубликован в канале!');
+                    track(`Posted top 4 servers to channel (pings: ${topServers.map(s => s.ping).join(',')}ms)`);
+                    return true;
+                } else {
+                    console.error('Ошибка отправки:', result);
+                    showToast('❌ Ошибка публикации! Проверьте права бота.', true);
+                    return false;
+                }
+            } catch(e) {
+                console.error('Ошибка:', e);
+                showToast('❌ Ошибка при публикации!', true);
+                return false;
+            }
+        }
+
+        // Запустить автопостинг
+        function startAutoPosting() {
+            if (autoPostInterval) clearInterval(autoPostInterval);
+            autoPostInterval = setInterval(() => {
+                postPingsToChannel();
+            }, 30 * 60 * 1000); // 30 минут
+            document.getElementById('autoPostStatus').innerHTML = '✅ АВТОПОСТИНГ ВКЛЮЧЕН (30 мин)';
+        }
+
+        async function updatePreview() {
+            const previewDiv = document.getElementById('previewList');
+            previewDiv.innerHTML = '<div class="loading-spinner" style="padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i><p style="font-size: 0.7rem;">Загрузка...</p></div>';
+            
+            const topServers = await getTop4ServersWithoutRussia();
+            if (topServers.length === 0) {
+                previewDiv.innerHTML = '<p style="color: #ff6666; text-align: center;">❌ Нет доступных серверов!</p>';
+                return;
+            }
+            
+            previewDiv.innerHTML = '';
+            for (const item of topServers) {
+                const div = document.createElement('div');
+                div.className = 'top-server-item';
+                div.innerHTML = `
+                    <div>
+                        <strong>${item.server.name}</strong> ${item.server.flag}<br>
+                        <span style="font-size: 0.65rem; color: #aaa;">Пинг: ${item.ping}ms</span>
+                    </div>
+                    <button class="copy-config-btn" data-config="${item.server.config.replace(/"/g, '&quot;')}">
+                        <i class="fa-regular fa-copy"></i> Копировать
+                    </button>
+                `;
+                previewDiv.appendChild(div);
+            }
+            
+            document.querySelectorAll('.copy-config-btn').forEach(btn => {
+                btn.onclick = async (e) => {
+                    e.stopPropagation();
+                    const config = btn.getAttribute('data-config');
+                    await navigator.clipboard.writeText(config);
+                    showToast('✅ Конфиг скопирован!');
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Скопировано!';
+                    setTimeout(() => {
+                        btn.innerHTML = '<i class="fa-regular fa-copy"></i> Копировать';
+                    }, 2000);
+                };
+            });
+        }
+
         async function loadServers(filterRegion = 'all') {
             const list = document.getElementById('serverList');
             if (!SERVERS.length) {
@@ -492,11 +646,9 @@
                 card.onclick = async () => {
                     document.querySelectorAll('.server-card').forEach(c => c.classList.remove('selected'));
                     card.classList.add('selected');
-                    
-                    // Копируем конфиг в буфер обмена
                     try {
                         await navigator.clipboard.writeText(server.config);
-                        showToast(`✅ ${server.name} скопирован! Вставьте в Hiddify/v2rayNG`);
+                        showToast(`✅ ${server.name} скопирован!`);
                         track(`Copied: ${server.name} (ping: ${result.ping || '?'}ms)`);
                         tg.HapticFeedback.notificationOccurred('success');
                     } catch(e) {
@@ -526,7 +678,6 @@
             btn.innerHTML = '<i class="fa-solid fa-rotate"></i> ОБНОВИТЬ ПИНГИ';
             btn.disabled = false;
             showToast('Пинги обновлены!');
-            tg.HapticFeedback.impactOccurred('light');
         });
 
         function checkMaintenanceMode() {
@@ -561,6 +712,8 @@
             document.getElementById('userView').style.display = 'none';
             document.getElementById('adminView').style.display = 'block';
             initAdminMode();
+            startAutoPosting();
+            updatePreview();
         } else {
             setTimeout(checkMaintenanceMode, 800);
         }
@@ -665,7 +818,18 @@
             });
         });
 
+        document.getElementById('postPingsBtn')?.addEventListener('click', async () => {
+            const btn = document.getElementById('postPingsBtn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ПУБЛИКУЮ...';
+            btn.disabled = true;
+            await postPingsToChannel();
+            await updatePreview();
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ВЫЛОЖИТЬ ПИНГИ';
+            btn.disabled = false;
+        });
+
         document.getElementById('backToUserBtn')?.addEventListener('click', () => {
+            if (autoPostInterval) clearInterval(autoPostInterval);
             document.getElementById('adminView').style.display = 'none';
             document.getElementById('userView').style.display = 'block';
             setTimeout(checkMaintenanceMode, 100);
