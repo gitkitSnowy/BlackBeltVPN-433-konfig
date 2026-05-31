@@ -196,13 +196,13 @@
         </div>
 
         <div class="servers-area" id="serversArea">
-            <div class="warning-banner" id="warningBanner" style="display: none;">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <span>Внимание! При нажатии на сервер конфиг скопируется. Откройте Hiddify/v2rayNG и вставьте его вручную.</span>
+            <div class="warning-banner" id="warningBanner">
+                <i class="fa-solid fa-info-circle"></i>
+                <span>⚠️ Встроенный браузер Telegram не поддерживает автоматическое открытие vless://. Конфиг будет скопирован — откройте Hiddify/v2rayNG и вставьте вручную.</span>
             </div>
             
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <p style="font-size: 0.75rem; font-weight: 800; color: var(--accent);">🌍 ВЫБЕРИТЕ СЕРВЕР (433 конфига)</p>
+                <p style="font-size: 0.75rem; font-weight: 800; color: var(--accent);">🌍 ВЫБЕРИТЕ СЕРВЕР (<span id="serversCount">0</span> конфигов)</p>
                 <button class="refresh-btn" id="refreshServers">
                     <i class="fa-solid fa-rotate"></i> ОБНОВИТЬ ПИНГИ
                 </button>
@@ -218,7 +218,7 @@
             <div class="server-list" id="serverList">
                 <div class="loading-spinner">
                     <i class="fa-solid fa-spinner fa-spin"></i>
-                    <p style="margin-top: 10px;">Загрузка 433 серверов...</p>
+                    <p style="margin-top: 10px;">Загрузка серверов...</p>
                 </div>
             </div>
             
@@ -226,8 +226,8 @@
                 <p style="font-size: 0.7rem; color: #aaa; text-align: center;">
                     <i class="fa-solid fa-info-circle"></i> Как добавить конфиг:<br>
                     1. Нажмите на сервер → конфиг скопируется<br>
-                    2. Откройте Hiddify / v2rayNG / Nekobox<br>
-                    3. Нажмите "Добавить из буфера обмена"<br>
+                    2. Откройте Hiddify / v2rayNG / Nekobox / v2box<br>
+                    3. Нажмите "Добавить из буфера обмена" / "Импорт"<br>
                     4. Готово!
                 </p>
             </div>
@@ -271,7 +271,7 @@
     <div class="admin-wrap" id="adminView">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
             <h2 style="font-family: Orbitron; font-size: 1.1rem; color: var(--accent);">ADMIN CENTER</h2>
-            <span style="font-size: 0.7rem; opacity: 0.5;">@Kegovich v5.0</span>
+            <span style="font-size: 0.7rem; opacity: 0.5;">v5.0</span>
         </div>
 
         <div class="admin-controls">
@@ -297,14 +297,14 @@
                 <div style="font-size: 0.65rem; color: #8f8f9e; font-weight: 800; margin-top: 5px;">ВСЕГО ЗАПРОСОВ</div>
             </div>
             <div class="stat-card">
-                <div class="stat-val" id="totalUsers">0</div>
-                <div style="font-size: 0.65rem; color: #8f8f9e; font-weight: 800; margin-top: 5px;">БАЗА РАССЫЛКИ</div>
+                <div class="stat-val" id="totalServersAdmin">0</div>
+                <div style="font-size: 0.65rem; color: #8f8f9e; font-weight: 800; margin-top: 5px;">ЗАГРУЖЕНО СЕРВЕРОВ</div>
             </div>
         </div>
 
         <div class="top-servers-list" id="topServersPreview">
             <p style="font-size: 0.7rem; color: var(--accent); margin-bottom: 10px;">🏆 ТОП-4 СЕРВЕРА (БЕЗ РОССИИ)</p>
-            <div id="previewList">Нажмите "ВЫЛОЖИТЬ ПИНГИ" для предпросмотра</div>
+            <div id="previewList">Загрузка...</div>
         </div>
 
         <div class="broadcast-tool">
@@ -347,7 +347,7 @@
     <script>
         const BOT_TOKEN = '8823340692:AAFx8VoHnK7kR310x5qiCOYDYGNnwztzTOg';
         const CH_USER = '@BlackBeltVPN';
-        const CHANNEL_ID = '@BlackBeltVPN'; // ID канала для постинга
+        const CHANNEL_ID = '@BlackBeltVPN';
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.headerColor = '#050508';
@@ -359,6 +359,7 @@
         let allLogs = [];
         let SERVERS = [];
         let autoPostInterval = null;
+        let isAdmin = false;
 
         const CONFIGS_URL = 'https://gist.githubusercontent.com/gitkitSnowy/c50e7bf14739ff9c6fdfd0ed0df7bfe1/raw/configs.txt';
 
@@ -372,7 +373,6 @@
             }, 2500);
         }
 
-        // Реальный пинг
         async function realPing(ip, port = 443) {
             const start = Date.now();
             try {
@@ -387,7 +387,7 @@
             }
         }
 
-        async function simulatePing(ip) {
+        async function simulatePing() {
             return new Promise(resolve => {
                 const ping = Math.floor(Math.random() * 150) + 20;
                 const online = Math.random() > 0.12;
@@ -399,9 +399,9 @@
             try {
                 const result = await realPing(ip, port);
                 if (result.online) return result;
-                return await simulatePing(ip);
+                return await simulatePing();
             } catch {
-                return await simulatePing(ip);
+                return await simulatePing();
             }
         }
 
@@ -417,7 +417,7 @@
         function getServerInfo(config, index) {
             let name = '', flag = '🌍', region = 'other', country = 'Unknown';
             
-            if (config.includes('Russia') || config.includes('RU') || config.includes('VK') || config.includes('Beget') || config.includes('cloud.ru') || config.includes('Datahouse') || config.includes('EdgeCenter') || config.includes('Hip-Hosting') || config.includes('Selectel') || config.includes('Timeweb') || config.includes('UFO Hosting')) {
+            if (config.includes('VK') || config.includes('Beget') || config.includes('cloud.ru') || config.includes('Datahouse') || config.includes('EdgeCenter') || config.includes('Hip-Hosting') || config.includes('Selectel') || config.includes('Timeweb') || config.includes('UFO Hosting')) {
                 name = `BlackBelt_RU_${index}`; flag = '🇷🇺'; region = 'ru'; country = 'Russia';
             } else if (config.includes('Austria')) { name = `BlackBelt_AT_${index}`; flag = '🇦🇹'; region = 'eu'; country = 'Austria';
             } else if (config.includes('Australia')) { name = `BlackBelt_AU_${index}`; flag = '🇦🇺'; region = 'other'; country = 'Australia';
@@ -443,8 +443,9 @@
 
         async function loadConfigsFromGitHub() {
             try {
+                console.log('Загрузка конфигов с GitHub...');
                 const response = await fetch(CONFIGS_URL);
-                if (!response.ok) throw new Error('Ошибка загрузки');
+                if (!response.ok) throw new Error('Ошибка загрузки: ' + response.status);
                 const text = await response.text();
                 const lines = text.split('\n').filter(line => line.trim().startsWith('vless://'));
                 
@@ -459,6 +460,16 @@
                         });
                     }
                 }
+                
+                // Обновляем счётчик
+                const serversCountSpan = document.getElementById('serversCount');
+                if (serversCountSpan) serversCountSpan.textContent = SERVERS.length;
+                if (isAdmin) {
+                    const adminServersSpan = document.getElementById('totalServersAdmin');
+                    if (adminServersSpan) adminServersSpan.textContent = SERVERS.length;
+                }
+                
+                console.log(`✅ Загружено ${SERVERS.length} серверов`);
                 return true;
             } catch(e) {
                 console.error('Ошибка загрузки:', e);
@@ -466,14 +477,19 @@
             }
         }
 
-        // Получить топ-4 сервера без России
         async function getTop4ServersWithoutRussia() {
-            const serversWithoutRussia = SERVERS.filter(s => s.region !== 'ru');
-            const pingResults = [];
+            if (SERVERS.length === 0) {
+                await loadConfigsFromGitHub();
+            }
             
+            const serversWithoutRussia = SERVERS.filter(s => s.region !== 'ru');
+            if (serversWithoutRussia.length === 0) return [];
+            
+            const pingResults = [];
             for (const server of serversWithoutRussia) {
                 const result = await checkPing(server.ip, server.port);
                 pingResults.push({ server, ping: result.ping, online: result.online });
+                await new Promise(r => setTimeout(r, 50));
             }
             
             const onlineServers = pingResults.filter(p => p.online);
@@ -482,7 +498,6 @@
             return onlineServers.slice(0, 4);
         }
 
-        // Сформировать сообщение для поста
         function formatPostMessage(topServers) {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
@@ -511,7 +526,6 @@
             return message;
         }
 
-        // Отправить пост в канал
         async function postPingsToChannel() {
             try {
                 const topServers = await getTop4ServersWithoutRussia();
@@ -522,7 +536,6 @@
                 
                 const message = formatPostMessage(topServers);
                 
-                // Отправляем через Telegram Bot API
                 const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -551,17 +564,19 @@
             }
         }
 
-        // Запустить автопостинг
         function startAutoPosting() {
             if (autoPostInterval) clearInterval(autoPostInterval);
             autoPostInterval = setInterval(() => {
                 postPingsToChannel();
-            }, 30 * 60 * 1000); // 30 минут
-            document.getElementById('autoPostStatus').innerHTML = '✅ АВТОПОСТИНГ ВКЛЮЧЕН (30 мин)';
+            }, 30 * 60 * 1000);
+            const statusSpan = document.getElementById('autoPostStatus');
+            if (statusSpan) statusSpan.innerHTML = '✅ АВТОПОСТИНГ ВКЛЮЧЕН (30 мин)';
         }
 
         async function updatePreview() {
             const previewDiv = document.getElementById('previewList');
+            if (!previewDiv) return;
+            
             previewDiv.innerHTML = '<div class="loading-spinner" style="padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i><p style="font-size: 0.7rem;">Загрузка...</p></div>';
             
             const topServers = await getTop4ServersWithoutRussia();
@@ -579,7 +594,7 @@
                         <strong>${item.server.name}</strong> ${item.server.flag}<br>
                         <span style="font-size: 0.65rem; color: #aaa;">Пинг: ${item.ping}ms</span>
                     </div>
-                    <button class="copy-config-btn" data-config="${item.server.config.replace(/"/g, '&quot;')}">
+                    <button class="copy-config-btn" data-config="${item.server.config.replace(/"/g, '&quot;').replace(/'/g, '&#39;')}">
                         <i class="fa-regular fa-copy"></i> Копировать
                     </button>
                 `;
@@ -603,7 +618,11 @@
         async function loadServers(filterRegion = 'all') {
             const list = document.getElementById('serverList');
             if (!SERVERS.length) {
-                list.innerHTML = '<div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i><p>Загрузка конфигураций...</p></div>';
+                await loadConfigsFromGitHub();
+            }
+            
+            if (!SERVERS.length) {
+                list.innerHTML = '<div class="loading-spinner" style="color: red;"><i class="fa-solid fa-circle-exclamation"></i><p>Ошибка загрузки серверов!</p></div>';
                 return;
             }
 
@@ -611,10 +630,12 @@
             
             const filtered = SERVERS.filter(s => filterRegion === 'all' || s.region === filterRegion);
             
-            const pingResults = await Promise.all(filtered.map(async (server) => {
+            const pingResults = [];
+            for (const server of filtered) {
                 const result = await checkPing(server.ip, server.port);
-                return { server, result };
-            }));
+                pingResults.push({ server, result });
+                await new Promise(r => setTimeout(r, 10));
+            }
             
             pingResults.sort((a, b) => {
                 if (!a.result.online && !b.result.online) return 0;
@@ -648,7 +669,7 @@
                     card.classList.add('selected');
                     try {
                         await navigator.clipboard.writeText(server.config);
-                        showToast(`✅ ${server.name} скопирован!`);
+                        showToast(`✅ ${server.name} скопирован! Вставьте в Hiddify/v2rayNG`);
                         track(`Copied: ${server.name} (ping: ${result.ping || '?'}ms)`);
                         tg.HapticFeedback.notificationOccurred('success');
                     } catch(e) {
@@ -660,16 +681,35 @@
             }
         }
 
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.onclick = () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                loadServers(btn.dataset.region);
-            };
-        });
+        // Инициализация
+        async function init() {
+            await loadConfigsFromGitHub();
+            
+            if (me.username?.toLowerCase() === 'kegovich') {
+                isAdmin = true;
+                document.getElementById('userView').style.display = 'none';
+                document.getElementById('adminView').style.display = 'block';
+                document.getElementById('totalServersAdmin').textContent = SERVERS.length;
+                startAutoPosting();
+                updatePreview();
+                initAdminMode();
+            } else {
+                setTimeout(checkMaintenanceMode, 800);
+            }
+        }
+
+        function initFilters() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.onclick = () => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    loadServers(btn.dataset.region);
+                };
+            });
+        }
 
         document.getElementById('refreshServers')?.addEventListener('click', async () => {
-            const activeFilter = document.querySelector('.filter-btn.active').dataset.region;
+            const activeFilter = document.querySelector('.filter-btn.active')?.dataset.region || 'all';
             const btn = document.getElementById('refreshServers');
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ОБНОВЛЯЮ...';
             btn.disabled = true;
@@ -694,67 +734,55 @@
             const getBtn = document.getElementById('getAccessBtn');
             
             if (isMaintenanceMode) {
-                alert.style.display = 'block';
-                status.className = 'status-pill maintenance';
-                status.innerHTML = '<i class="fa-solid fa-wrench"></i> ТЕХ. РАБОТЫ';
-                getBtn.disabled = true;
-                getBtn.innerHTML = '<i class="fa-solid fa-ban"></i> НЕДОСТУПНО';
+                if (alert) alert.style.display = 'block';
+                if (status) { status.className = 'status-pill maintenance'; status.innerHTML = '<i class="fa-solid fa-wrench"></i> ТЕХ. РАБОТЫ'; }
+                if (getBtn) { getBtn.disabled = true; getBtn.innerHTML = '<i class="fa-solid fa-ban"></i> НЕДОСТУПНО'; }
             } else {
-                alert.style.display = 'none';
-                status.className = 'status-pill';
-                status.innerHTML = '<i class="fa-solid fa-circle-check"></i> СЕРВЕР: ONLINE';
-                getBtn.disabled = false;
-                getBtn.innerHTML = '<i class="fa-solid fa-bolt-lightning"></i> ПОЛУЧИТЬ КЛЮЧ';
+                if (alert) alert.style.display = 'none';
+                if (status) { status.className = 'status-pill'; status.innerHTML = '<i class="fa-solid fa-circle-check"></i> СЕРВЕР: ONLINE'; }
+                if (getBtn) { getBtn.disabled = false; getBtn.innerHTML = '<i class="fa-solid fa-bolt-lightning"></i> ПОЛУЧИТЬ КЛЮЧ'; }
             }
-        }
-
-        if (me.username?.toLowerCase() === 'kegovich') {
-            document.getElementById('userView').style.display = 'none';
-            document.getElementById('adminView').style.display = 'block';
-            initAdminMode();
-            startAutoPosting();
-            updatePreview();
-        } else {
-            setTimeout(checkMaintenanceMode, 800);
         }
 
         const getBtn = document.getElementById('getAccessBtn');
         const serversArea = document.getElementById('serversArea');
         const sysMsg = document.getElementById('systemMsg');
 
-        getBtn.addEventListener('click', async () => {
-            if (isMaintenanceMode) {
-                sysMsg.textContent = '⚠️ Сервер на техническом обслуживании';
-                sysMsg.style.color = 'var(--warning)';
-                return;
-            }
-
-            sysMsg.textContent = '🛡️ Проверка безопасности...';
-            sysMsg.style.color = 'var(--accent)';
-            
-            try {
-                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${CH_USER}&user_id=${me.id}`);
-                const data = await res.json();
-
-                if (data.ok && ['member', 'administrator', 'creator'].includes(data.result.status)) {
-                    getBtn.style.display = 'none';
-                    serversArea.style.display = 'block';
-                    sysMsg.textContent = '✓ Доступ подтвержден. Проверяем пинги серверов...';
-                    sysMsg.style.color = 'var(--success)';
-                    track('Access Granted');
-                    await loadConfigsFromGitHub();
-                    await loadServers();
-                    sysMsg.textContent = `✓ Загружено ${SERVERS.length} серверов. Нажми на любой, чтобы скопировать конфиг!`;
-                } else {
-                    sysMsg.textContent = '✕ Ошибка: Сначала подпишитесь на канал!';
-                    sysMsg.style.color = '#ff4a4a';
-                    track('Access Denied (No Sub)');
+        if (getBtn) {
+            getBtn.addEventListener('click', async () => {
+                if (isMaintenanceMode) {
+                    sysMsg.textContent = '⚠️ Сервер на техническом обслуживании';
+                    sysMsg.style.color = 'var(--warning)';
+                    return;
                 }
-            } catch (e) { 
-                sysMsg.textContent = 'Ошибка соединения'; 
-                sysMsg.style.color = 'var(--danger)';
-            }
-        });
+
+                sysMsg.textContent = '🛡️ Проверка безопасности...';
+                sysMsg.style.color = 'var(--accent)';
+                
+                try {
+                    const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${CH_USER}&user_id=${me.id}`);
+                    const data = await res.json();
+
+                    if (data.ok && ['member', 'administrator', 'creator'].includes(data.result.status)) {
+                        getBtn.style.display = 'none';
+                        serversArea.style.display = 'block';
+                        sysMsg.textContent = '✓ Доступ подтвержден. Загружаем серверы...';
+                        sysMsg.style.color = 'var(--success)';
+                        track('Access Granted');
+                        await loadServers();
+                        sysMsg.textContent = `✓ Загружено ${SERVERS.length} серверов. Нажми на любой, чтобы скопировать конфиг!`;
+                        initFilters();
+                    } else {
+                        sysMsg.textContent = '✕ Ошибка: Сначала подпишитесь на канал!';
+                        sysMsg.style.color = '#ff4a4a';
+                        track('Access Denied (No Sub)');
+                    }
+                } catch (e) { 
+                    sysMsg.textContent = 'Ошибка соединения'; 
+                    sysMsg.style.color = 'var(--danger)';
+                }
+            });
+        }
 
         function track(action) {
             if (!window.fb) return;
@@ -774,18 +802,21 @@
                 window.fb.onValue(window.fb.ref(db, 'maintenance_mode'), (snap) => {
                     isMaintenanceMode = snap.val() || false;
                     const btn = document.getElementById('toggleMaintenanceBtn');
-                    if (isMaintenanceMode) {
-                        btn.innerHTML = '<i class="fa-solid fa-check"></i> ОТКЛЮЧИТЬ ТЕХ. РАБОТЫ';
-                        btn.style.background = 'var(--success)';
-                    } else {
-                        btn.innerHTML = '<i class="fa-solid fa-wrench"></i> ВКЛЮЧИТЬ ТЕХ. РАБОТЫ';
-                        btn.style.background = 'var(--accent)';
+                    if (btn) {
+                        if (isMaintenanceMode) {
+                            btn.innerHTML = '<i class="fa-solid fa-check"></i> ОТКЛЮЧИТЬ ТЕХ. РАБОТЫ';
+                            btn.style.background = 'var(--success)';
+                        } else {
+                            btn.innerHTML = '<i class="fa-solid fa-wrench"></i> ВКЛЮЧИТЬ ТЕХ. РАБОТЫ';
+                            btn.style.background = 'var(--accent)';
+                        }
                     }
                 });
 
                 window.fb.onValue(window.fb.ref(db, 'live_events'), (snap) => {
                     const logs = snap.val();
                     const list = document.getElementById('logsList');
+                    if (!list) return;
                     list.innerHTML = '';
                     allLogs = [];
                     let count = 0;
@@ -802,11 +833,13 @@
                         });
                     }
                     if (count === 0) list.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.3;">Логи отсутствуют</div>';
-                    document.getElementById('totalClicks').textContent = count;
+                    const totalClicksSpan = document.getElementById('totalClicks');
+                    if (totalClicksSpan) totalClicksSpan.textContent = count;
                 });
 
                 window.fb.onValue(window.fb.ref(db, 'mailing_list'), (snap) => {
-                    document.getElementById('totalUsers').textContent = snap.exists() ? Object.keys(snap.val()).length : 0;
+                    const totalUsersSpan = document.getElementById('totalUsers');
+                    if (totalUsersSpan) totalUsersSpan.textContent = snap.exists() ? Object.keys(snap.val()).length : 0;
                 });
             }, 1200);
         }
@@ -903,9 +936,12 @@
             document.getElementById('confirmModal').style.display = 'none';
         }
 
-        document.getElementById('confirmModal').addEventListener('click', (e) => {
+        document.getElementById('confirmModal')?.addEventListener('click', (e) => {
             if (e.target.id === 'confirmModal') closeModal();
         });
+
+        // Запуск инициализации
+        init();
     </script>
 </body>
 </html>
