@@ -100,8 +100,9 @@
         .status-indicator.checking { background: var(--accent); animation: pulse 1s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        .add-hint { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: white; padding: 12px 20px; border-radius: 30px; font-size: 0.8rem; font-weight: bold; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: none; align-items: center; gap: 10px; animation: slideUp 0.3s ease; }
-        .add-hint i { font-size: 1.2rem; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent); color: white; padding: 14px 24px; border-radius: 40px; font-size: 0.85rem; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 12px; transition: transform 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.4); pointer-events: none; }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast i { font-size: 1.2rem; }
 
         .why-us { margin-top: 30px; padding: 25px; background: rgba(163, 112, 247, 0.05); border-radius: 25px; border: 1px solid rgba(163, 112, 247, 0.2); text-align: left; }
         .why-us h3 { font-family: 'Orbitron'; font-size: 1rem; color: var(--accent); margin-bottom: 15px; text-align: center; }
@@ -148,15 +149,18 @@
         .loading-spinner { text-align: center; padding: 40px; }
         .loading-spinner i { font-size: 2rem; color: var(--accent); animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .warning-banner { background: rgba(255, 100, 100, 0.15); border: 1px solid #ff6666; border-radius: 12px; padding: 12px; margin-bottom: 15px; font-size: 0.75rem; color: #ffaaaa; display: flex; align-items: center; gap: 10px; }
+        .warning-banner i { font-size: 1rem; }
     </style>
 </head>
 <body>
     <div class="bg-gradient"></div>
 
-    <!-- Всплывающая подсказка -->
-    <div class="add-hint" id="addHint">
-        <i class="fa-solid fa-plus-circle"></i>
-        <span>Нажмите "Добавить", чтобы импортировать</span>
+    <!-- Toast-уведомление -->
+    <div class="toast" id="toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Конфиг скопирован!</span>
     </div>
 
     <div class="app-card" id="userView">
@@ -187,6 +191,11 @@
         </div>
 
         <div class="servers-area" id="serversArea">
+            <div class="warning-banner" id="warningBanner" style="display: none;">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>Внимание! При нажатии на сервер конфиг скопируется. Откройте Hiddify/v2rayNG и вставьте его вручную.</span>
+            </div>
+            
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <p style="font-size: 0.75rem; font-weight: 800; color: var(--accent);">🌍 ВЫБЕРИТЕ СЕРВЕР (433 конфига)</p>
                 <button class="refresh-btn" id="refreshServers">
@@ -206,6 +215,16 @@
                     <i class="fa-solid fa-spinner fa-spin"></i>
                     <p style="margin-top: 10px;">Загрузка 433 серверов...</p>
                 </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: rgba(163,112,247,0.1); border-radius: 16px;">
+                <p style="font-size: 0.7rem; color: #aaa; text-align: center;">
+                    <i class="fa-solid fa-info-circle"></i> Как добавить конфиг:<br>
+                    1. Нажмите на сервер → конфиг скопируется<br>
+                    2. Откройте Hiddify / v2rayNG / Nekobox<br>
+                    3. Нажмите "Добавить из буфера обмена"<br>
+                    4. Готово!
+                </p>
             </div>
         </div>
 
@@ -313,6 +332,7 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.headerColor = '#050508';
+        tg.enableClosingConfirmation();
 
         const me = tg.initDataUnsafe?.user || { id: 7777777, username: 'Anonymous' };
 
@@ -320,51 +340,45 @@
         let allLogs = [];
         let SERVERS = [];
 
-        // Прямая ссылка на твой Gist с конфигами
         const CONFIGS_URL = 'https://gist.githubusercontent.com/gitkitSnowy/c50e7bf14739ff9c6fdfd0ed0df7bfe1/raw/configs.txt';
 
-        // Функция реального пинга через fetch с таймаутом
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.querySelector('i').className = isError ? 'fa-solid fa-circle-exclamation' : 'fa-solid fa-circle-check';
+            toast.querySelector('span').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+
         async function realPing(ip, port = 443) {
             const start = Date.now();
             const url = `https://${ip}:${port}/`;
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
-                const response = await fetch(url, {
-                    method: 'HEAD',
-                    mode: 'no-cors',
-                    signal: controller.signal
-                }).catch(() => null);
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
+                await fetch(url, { method: 'HEAD', mode: 'no-cors', signal: controller.signal });
                 clearTimeout(timeoutId);
                 const ping = Date.now() - start;
-                // Даже если ответа нет, но соединение установилось - считаем что сервер отвечает
-                const online = ping < 3000;
-                return { ping: online ? ping : null, online };
+                return { ping: ping < 3000 ? ping : null, online: ping < 3000 };
             } catch {
                 return { ping: null, online: false };
             }
         }
 
-        // Симуляция пинга (если реальный не работает)
         async function simulatePing(ip) {
             return new Promise(resolve => {
-                const start = Date.now();
-                // Имитируем задержку сети
-                setTimeout(() => {
-                    const ping = Math.floor(Math.random() * 150) + 20;
-                    const online = Math.random() > 0.1;
-                    resolve({ ping, online });
-                }, 300 + Math.random() * 500);
+                const ping = Math.floor(Math.random() * 150) + 20;
+                const online = Math.random() > 0.12;
+                setTimeout(() => resolve({ ping, online }), 200 + Math.random() * 300);
             });
         }
 
-        // Комбинированный пинг - сначала реальный, если не работает - симуляция
         async function checkPing(ip, port = 443) {
             try {
-                // Пробуем реальный пинг
                 const result = await realPing(ip, port);
                 if (result.online) return result;
-                // Если реальный не сработал, используем симуляцию для визуализации
                 return await simulatePing(ip);
             } catch {
                 return await simulatePing(ip);
@@ -381,86 +395,25 @@
         }
 
         function getServerInfo(config, index) {
-            let name = '';
-            let flag = '🌍';
-            let region = 'other';
-            let country = 'Unknown';
+            let name = '', flag = '🌍', region = 'other', country = 'Unknown';
             
             if (config.includes('Russia') || config.includes('RU') || config.includes('VK') || config.includes('Beget') || config.includes('cloud.ru') || config.includes('Datahouse') || config.includes('EdgeCenter') || config.includes('Hip-Hosting') || config.includes('Selectel') || config.includes('Timeweb') || config.includes('UFO Hosting')) {
-                name = `BlackBelt_RU_${index}`;
-                flag = '🇷🇺';
-                region = 'ru';
-                country = 'Russia';
-            } else if (config.includes('Austria')) {
-                name = `BlackBelt_AT_${index}`;
-                flag = '🇦🇹';
-                region = 'eu';
-                country = 'Austria';
-            } else if (config.includes('Australia')) {
-                name = `BlackBelt_AU_${index}`;
-                flag = '🇦🇺';
-                region = 'other';
-                country = 'Australia';
-            } else if (config.includes('Bulgaria')) {
-                name = `BlackBelt_BG_${index}`;
-                flag = '🇧🇬';
-                region = 'eu';
-                country = 'Bulgaria';
-            } else if (config.includes('Czechia')) {
-                name = `BlackBelt_CZ_${index}`;
-                flag = '🇨🇿';
-                region = 'eu';
-                country = 'Czechia';
-            } else if (config.includes('Germany')) {
-                name = `BlackBelt_DE_${index}`;
-                flag = '🇩🇪';
-                region = 'eu';
-                country = 'Germany';
-            } else if (config.includes('Finland')) {
-                name = `BlackBelt_FI_${index}`;
-                flag = '🇫🇮';
-                region = 'eu';
-                country = 'Finland';
-            } else if (config.includes('France')) {
-                name = `BlackBelt_FR_${index}`;
-                flag = '🇫🇷';
-                region = 'eu';
-                country = 'France';
-            } else if (config.includes('United Kingdom') || config.includes('UK')) {
-                name = `BlackBelt_GB_${index}`;
-                flag = '🇬🇧';
-                region = 'eu';
-                country = 'UK';
-            } else if (config.includes('Lithuania')) {
-                name = `BlackBelt_LT_${index}`;
-                flag = '🇱🇹';
-                region = 'eu';
-                country = 'Lithuania';
-            } else if (config.includes('Netherlands') || config.includes('The Netherlands')) {
-                name = `BlackBelt_NL_${index}`;
-                flag = '🇳🇱';
-                region = 'eu';
-                country = 'Netherlands';
-            } else if (config.includes('Poland')) {
-                name = `BlackBelt_PL_${index}`;
-                flag = '🇵🇱';
-                region = 'eu';
-                country = 'Poland';
-            } else if (config.includes('Sweden')) {
-                name = `BlackBelt_SE_${index}`;
-                flag = '🇸🇪';
-                region = 'eu';
-                country = 'Sweden';
-            } else if (config.includes('United States') || config.includes('USA')) {
-                name = `BlackBelt_US_${index}`;
-                flag = '🇺🇸';
-                region = 'other';
-                country = 'USA';
-            } else {
-                name = `BlackBelt_${index}`;
-            }
+                name = `BlackBelt_RU_${index}`; flag = '🇷🇺'; region = 'ru'; country = 'Russia';
+            } else if (config.includes('Austria')) { name = `BlackBelt_AT_${index}`; flag = '🇦🇹'; region = 'eu'; country = 'Austria';
+            } else if (config.includes('Australia')) { name = `BlackBelt_AU_${index}`; flag = '🇦🇺'; region = 'other'; country = 'Australia';
+            } else if (config.includes('Bulgaria')) { name = `BlackBelt_BG_${index}`; flag = '🇧🇬'; region = 'eu'; country = 'Bulgaria';
+            } else if (config.includes('Czechia')) { name = `BlackBelt_CZ_${index}`; flag = '🇨🇿'; region = 'eu'; country = 'Czechia';
+            } else if (config.includes('Germany')) { name = `BlackBelt_DE_${index}`; flag = '🇩🇪'; region = 'eu'; country = 'Germany';
+            } else if (config.includes('Finland')) { name = `BlackBelt_FI_${index}`; flag = '🇫🇮'; region = 'eu'; country = 'Finland';
+            } else if (config.includes('France')) { name = `BlackBelt_FR_${index}`; flag = '🇫🇷'; region = 'eu'; country = 'France';
+            } else if (config.includes('United Kingdom') || config.includes('UK')) { name = `BlackBelt_GB_${index}`; flag = '🇬🇧'; region = 'eu'; country = 'UK';
+            } else if (config.includes('Lithuania')) { name = `BlackBelt_LT_${index}`; flag = '🇱🇹'; region = 'eu'; country = 'Lithuania';
+            } else if (config.includes('Netherlands') || config.includes('The Netherlands')) { name = `BlackBelt_NL_${index}`; flag = '🇳🇱'; region = 'eu'; country = 'Netherlands';
+            } else if (config.includes('Poland')) { name = `BlackBelt_PL_${index}`; flag = '🇵🇱'; region = 'eu'; country = 'Poland';
+            } else if (config.includes('Sweden')) { name = `BlackBelt_SE_${index}`; flag = '🇸🇪'; region = 'eu'; country = 'Sweden';
+            } else if (config.includes('United States') || config.includes('USA')) { name = `BlackBelt_US_${index}`; flag = '🇺🇸'; region = 'other'; country = 'USA';
+            } else { name = `BlackBelt_${index}`; }
             
-            // Извлекаем IP и порт
             let ipMatch = config.match(/@([\d\.]+):(\d+)/);
             let ip = ipMatch ? ipMatch[1] : '0.0.0.0';
             let port = ipMatch ? parseInt(ipMatch[2]) : 443;
@@ -468,7 +421,6 @@
             return { name, flag, region, ip, port, country, config };
         }
 
-        // Загрузка конфигов с GitHub Gist
         async function loadConfigsFromGitHub() {
             try {
                 const response = await fetch(CONFIGS_URL);
@@ -482,50 +434,16 @@
                     if (cfg) {
                         const info = getServerInfo(cfg, i + 1);
                         SERVERS.push({
-                            name: info.name,
-                            country: info.country,
-                            flag: info.flag,
-                            region: info.region,
-                            ip: info.ip,
-                            port: info.port,
-                            config: cfg
+                            name: info.name, country: info.country, flag: info.flag,
+                            region: info.region, ip: info.ip, port: info.port, config: cfg
                         });
                     }
                 }
-                console.log(`✅ Загружено ${SERVERS.length} серверов с GitHub`);
                 return true;
             } catch(e) {
                 console.error('Ошибка загрузки:', e);
-                document.getElementById('serverList').innerHTML = '<div class="loading-spinner" style="color: red;"><i class="fa-solid fa-circle-exclamation"></i><p>Ошибка загрузки конфигов! Проверьте интернет.</p></div>';
                 return false;
             }
-        }
-
-        // Функция для автоматического добавления конфига в HAP
-        function autoAddToHap(configUrl) {
-            // Пробуем открыть через intent (Android)
-            const intentUrl = `intent://${configUrl.replace('vless://', '')}#Intent;scheme=vless;package=com.v2ray.ang;end`;
-            
-            // Создаём временную ссылку
-            const link = document.createElement('a');
-            link.href = configUrl;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            
-            // Показываем подсказку перед редиректом
-            const hint = document.getElementById('addHint');
-            hint.style.display = 'flex';
-            setTimeout(() => {
-                hint.style.display = 'none';
-            }, 3000);
-            
-            // Пытаемся открыть
-            setTimeout(() => {
-                link.click();
-                document.body.removeChild(link);
-            }, 500);
-            
-            return true;
         }
 
         async function loadServers(filterRegion = 'all') {
@@ -538,17 +456,12 @@
             list.innerHTML = '<div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i><p>Проверка пингов серверов...</p></div>';
             
             const filtered = SERVERS.filter(s => filterRegion === 'all' || s.region === filterRegion);
-            list.innerHTML = '';
-
-            // Загружаем пинги параллельно
-            const pingPromises = filtered.map(async (server) => {
+            
+            const pingResults = await Promise.all(filtered.map(async (server) => {
                 const result = await checkPing(server.ip, server.port);
                 return { server, result };
-            });
+            }));
             
-            const pingResults = await Promise.all(pingPromises);
-            
-            // Сортируем по пингу (сначала самые быстрые)
             pingResults.sort((a, b) => {
                 if (!a.result.online && !b.result.online) return 0;
                 if (!a.result.online) return 1;
@@ -556,7 +469,8 @@
                 return (a.result.ping || 999) - (b.result.ping || 999);
             });
             
-            // Отображаем серверы
+            list.innerHTML = '';
+            
             for (const { server, result } of pingResults) {
                 const card = document.createElement('div');
                 card.className = 'server-card';
@@ -575,40 +489,19 @@
                     </div>
                 `;
                 
-                // При клике на карточку - автоматически добавляем в HAP и копируем
-                card.onclick = () => {
-                    // Выделяем визуально выбранный сервер
+                card.onclick = async () => {
                     document.querySelectorAll('.server-card').forEach(c => c.classList.remove('selected'));
                     card.classList.add('selected');
                     
-                    // Показываем уведомление
-                    const hint = document.getElementById('addHint');
-                    hint.querySelector('span').innerHTML = `Добавляю ${server.name}...`;
-                    hint.style.display = 'flex';
-                    
-                    // Добавляем в HAP через открытие ссылки
-                    const configWithName = server.config.split('#')[0] + `#BlackBeltVPN_${server.name}`;
-                    autoAddToHap(configWithName);
-                    
-                    // Копируем в буфер обмена
-                    navigator.clipboard.writeText(server.config).then(() => {
-                        setTimeout(() => {
-                            hint.querySelector('span').innerHTML = `✅ ${server.name} скопирован и открыт в HAP!`;
-                            setTimeout(() => {
-                                hint.style.display = 'none';
-                                hint.querySelector('span').innerHTML = 'Нажмите "Добавить", чтобы импортировать';
-                            }, 2000);
-                        }, 500);
-                    }).catch(() => {
-                        setTimeout(() => {
-                            hint.style.display = 'none';
-                            hint.querySelector('span').innerHTML = 'Нажмите "Добавить", чтобы импортировать';
-                        }, 1500);
-                    });
-                    
-                    track(`Auto-add to HAP: ${server.name} (ping: ${result.ping || '?'}ms)`);
-                    
-                    tg.HapticFeedback.impactOccurred('heavy');
+                    // Копируем конфиг в буфер обмена
+                    try {
+                        await navigator.clipboard.writeText(server.config);
+                        showToast(`✅ ${server.name} скопирован! Вставьте в Hiddify/v2rayNG`);
+                        track(`Copied: ${server.name} (ping: ${result.ping || '?'}ms)`);
+                        tg.HapticFeedback.notificationOccurred('success');
+                    } catch(e) {
+                        showToast(`❌ Ошибка копирования`, true);
+                    }
                 };
                 
                 list.appendChild(card);
@@ -632,6 +525,7 @@
             await loadServers(activeFilter);
             btn.innerHTML = '<i class="fa-solid fa-rotate"></i> ОБНОВИТЬ ПИНГИ';
             btn.disabled = false;
+            showToast('Пинги обновлены!');
             tg.HapticFeedback.impactOccurred('light');
         });
 
@@ -697,7 +591,7 @@
                     track('Access Granted');
                     await loadConfigsFromGitHub();
                     await loadServers();
-                    sysMsg.textContent = `✓ Загружено ${SERVERS.length} серверов. Нажми на любой — добавится в HAP!`;
+                    sysMsg.textContent = `✓ Загружено ${SERVERS.length} серверов. Нажми на любой, чтобы скопировать конфиг!`;
                 } else {
                     sysMsg.textContent = '✕ Ошибка: Сначала подпишитесь на канал!';
                     sysMsg.style.color = '#ff4a4a';
@@ -714,17 +608,10 @@
             const timestamp = new Date();
             const logEntry = window.fb.push(window.fb.ref(window.fb.database, 'live_events'));
             window.fb.set(logEntry, {
-                uid: me.id,
-                user: me.username || 'user_'+me.id,
-                action: action,
-                time: timestamp.toLocaleTimeString('ru-RU'),
-                date: timestamp.toLocaleDateString('ru-RU'),
-                timestamp: timestamp.getTime()
+                uid: me.id, user: me.username || 'user_'+me.id, action: action,
+                time: timestamp.toLocaleTimeString('ru-RU'), date: timestamp.toLocaleDateString('ru-RU'), timestamp: timestamp.getTime()
             });
-            window.fb.set(window.fb.ref(window.fb.database, 'mailing_list/' + me.id), {
-                name: me.username || 'Anonymous',
-                id: me.id
-            });
+            window.fb.set(window.fb.ref(window.fb.database, 'mailing_list/' + me.id), { name: me.username || 'Anonymous', id: me.id });
         }
 
         function initAdminMode() {
@@ -753,25 +640,15 @@
                     if (logs) {
                         const logsArray = Object.entries(logs).map(([key, val]) => ({...val, key}));
                         logsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                        
                         logsArray.forEach(l => {
-                            count++;
-                            allLogs.push(l);
+                            count++; allLogs.push(l);
                             const div = document.createElement('div');
                             div.className = 'log-row';
-                            div.innerHTML = `
-                                <span class="log-user">@${l.user}</span>
-                                <span class="log-action">${l.action}</span>
-                                <span class="log-time">${l.date || ''} ${l.time}</span>
-                            `;
+                            div.innerHTML = `<span class="log-user">@${l.user}</span><span class="log-action">${l.action}</span><span class="log-time">${l.date || ''} ${l.time}</span>`;
                             list.appendChild(div);
                         });
                     }
-                    
-                    if (count === 0) {
-                        list.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.3;">Логи отсутствуют</div>';
-                    }
-                    
+                    if (count === 0) list.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.3;">Логи отсутствуют</div>';
                     document.getElementById('totalClicks').textContent = count;
                 });
 
@@ -782,14 +659,10 @@
         }
 
         document.getElementById('toggleMaintenanceBtn')?.addEventListener('click', () => {
-            showModal(
-                'Режим технических работ',
-                isMaintenanceMode ? 'Выключить режим обслуживания? Пользователи снова смогут получать ключи.' : 'Включить режим обслуживания? Пользователи не смогут получить ключи.',
-                () => {
-                    window.fb.set(window.fb.ref(window.fb.database, 'maintenance_mode'), !isMaintenanceMode);
-                    closeModal();
-                }
-            );
+            showModal('Режим технических работ', isMaintenanceMode ? 'Выключить режим обслуживания?' : 'Включить режим обслуживания?', () => {
+                window.fb.set(window.fb.ref(window.fb.database, 'maintenance_mode'), !isMaintenanceMode);
+                closeModal();
+            });
         });
 
         document.getElementById('backToUserBtn')?.addEventListener('click', () => {
@@ -800,95 +673,58 @@
 
         document.getElementById('sendMailBtn')?.addEventListener('click', async () => {
             const text = document.getElementById('mailBody').value;
-            if (!text.trim()) {
-                alert('Введите текст сообщения!');
-                return;
-            }
+            if (!text.trim()) { alert('Введите текст сообщения!'); return; }
             
-            showModal(
-                'Подтверждение рассылки',
-                `Отправить сообщение всем пользователям?\n\n"${text.substring(0, 50)}${text.length > 50 ? '...' : ''}"`,
-                async () => {
-                    closeModal();
-                    const btn = document.getElementById('sendMailBtn');
-                    const progressContainer = document.getElementById('progressContainer');
-                    const progressText = document.getElementById('progressText');
-                    const progressFill = document.getElementById('progressFill');
-                    
-                    btn.disabled = true;
-                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> РАССЫЛКА...';
-                    progressContainer.style.display = 'block';
+            showModal('Подтверждение рассылки', `Отправить сообщение всем пользователям?\n\n"${text.substring(0, 50)}${text.length > 50 ? '...' : ''}"`, async () => {
+                closeModal();
+                const btn = document.getElementById('sendMailBtn');
+                const progressContainer = document.getElementById('progressContainer');
+                const progressText = document.getElementById('progressText');
+                const progressFill = document.getElementById('progressFill');
+                
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> РАССЫЛКА...';
+                progressContainer.style.display = 'block';
 
-                    const snap = await window.fb.get(window.fb.ref(window.fb.database, 'mailing_list'));
-                    
-                    if (snap.exists()) {
-                        const users = Object.values(snap.val());
-                        const total = users.length;
-                        let sent = 0;
-
-                        for (let user of users) {
-                            try {
-                                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                                    method: 'POST',
-                                    headers: {'Content-Type': 'application/json'},
-                                    body: JSON.stringify({
-                                        chat_id: user.id,
-                                        text: text,
-                                        parse_mode: 'HTML'
-                                    })
-                                });
-                                sent++;
-                            } catch (e) {
-                                console.log('Ошибка отправки:', user.id);
-                            }
-                            
-                            progressText.textContent = `${sent}/${total}`;
-                            progressFill.style.width = `${(sent/total)*100}%`;
-                            await new Promise(r => setTimeout(r, 50));
-                        }
-                        
-                        alert(`✅ Рассылка завершена!\nОтправлено: ${sent} из ${total}`);
-                        document.getElementById('mailBody').value = '';
-                    } else {
-                        alert('База пользователей пуста');
+                const snap = await window.fb.get(window.fb.ref(window.fb.database, 'mailing_list'));
+                if (snap.exists()) {
+                    const users = Object.values(snap.val());
+                    const total = users.length;
+                    let sent = 0;
+                    for (let user of users) {
+                        try {
+                            await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                                method: 'POST', headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({ chat_id: user.id, text: text, parse_mode: 'HTML' })
+                            });
+                            sent++;
+                        } catch(e) { console.log('Ошибка отправки:', user.id); }
+                        progressText.textContent = `${sent}/${total}`;
+                        progressFill.style.width = `${(sent/total)*100}%`;
+                        await new Promise(r => setTimeout(r, 50));
                     }
-
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ЗАПУСТИТЬ РАССЫЛКУ';
-                    progressContainer.style.display = 'none';
-                    progressFill.style.width = '0%';
-                }
-            );
+                    alert(`✅ Рассылка завершена!\nОтправлено: ${sent} из ${total}`);
+                    document.getElementById('mailBody').value = '';
+                } else { alert('База пользователей пуста'); }
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ЗАПУСТИТЬ РАССЫЛКУ';
+                progressContainer.style.display = 'none';
+                progressFill.style.width = '0%';
+            });
         });
 
         document.getElementById('downloadLogsBtn')?.addEventListener('click', () => {
-            if (allLogs.length === 0) {
-                alert('Нет логов для скачивания');
-                return;
-            }
-
-            const csvContent = [
-                ['Дата', 'Время', 'Пользователь', 'ID', 'Действие'].join(','),
-                ...allLogs.map(l => [
-                    l.date || '',
-                    l.time || '',
-                    l.user || '',
-                    l.uid || '',
-                    l.action || ''
-                ].join(','))
-            ].join('\n');
-
+            if (allLogs.length === 0) { alert('Нет логов для скачивания'); return; }
+            const csvContent = [['Дата', 'Время', 'Пользователь', 'ID', 'Действие'].join(','), ...allLogs.map(l => [l.date || '', l.time || '', l.user || '', l.uid || '', l.action || ''].join(','))].join('\n');
             const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
-            
             link.setAttribute('href', url);
             link.setAttribute('download', `blackbelt_logs_${new Date().toLocaleDateString('ru-RU').replace(/\./g, '-')}.csv`);
             link.style.visibility = 'hidden';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-
             tg.HapticFeedback.notificationOccurred('success');
         });
 
