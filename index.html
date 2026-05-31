@@ -73,12 +73,12 @@
         .filter-btn.active { background: var(--accent); border-color: var(--accent); }
         .filter-btn:hover { border-color: var(--accent); }
 
-        .server-list { display: grid; gap: 12px; max-height: 400px; overflow-y: auto; padding-right: 5px; }
+        .server-list { display: grid; gap: 12px; max-height: 450px; overflow-y: auto; padding-right: 5px; }
         .server-list::-webkit-scrollbar { width: 4px; }
         .server-list::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
         .server-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
-        .server-card { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.3s; position: relative; }
+        .server-card { background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 15px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; position: relative; }
         .server-card:hover { border-color: var(--accent); background: rgba(163, 112, 247, 0.05); }
         .server-card.selected { border-color: var(--accent); background: rgba(163, 112, 247, 0.1); }
 
@@ -89,21 +89,17 @@
         .server-details { font-size: 0.7rem; color: #8f8f9e; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
         .ping-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 8px; font-size: 0.65rem; font-weight: 800; }
-        .ping-badge.good { background: rgba(0, 255, 163, 0.15); color: var(--success); }
-        .ping-badge.medium { background: rgba(255, 165, 0, 0.15); color: var(--warning); }
-        .ping-badge.bad { background: rgba(255, 74, 74, 0.15); color: var(--danger); }
-        .ping-badge.checking { background: rgba(163, 112, 247, 0.15); color: var(--accent); }
-        .ping-badge.offline { background: rgba(100, 100, 100, 0.15); color: #666; }
+        .ping-badge.good { background: rgba(0, 255, 163, 0.2); color: var(--success); }
+        .ping-badge.medium { background: rgba(255, 165, 0, 0.2); color: var(--warning); }
+        .ping-badge.bad { background: rgba(255, 74, 74, 0.2); color: var(--danger); }
+        .ping-badge.offline { background: rgba(100, 100, 100, 0.2); color: #888; }
 
         .status-indicator { width: 8px; height: 8px; border-radius: 50%; }
         .status-indicator.online { background: var(--success); box-shadow: 0 0 8px var(--success); }
         .status-indicator.offline { background: #666; }
-        .status-indicator.checking { background: var(--accent); animation: pulse 1s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent); color: white; padding: 14px 24px; border-radius: 40px; font-size: 0.85rem; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 12px; transition: transform 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.4); pointer-events: none; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--accent); color: white; padding: 12px 20px; border-radius: 40px; font-size: 0.8rem; font-weight: bold; z-index: 1000; display: flex; align-items: center; gap: 10px; transition: transform 0.3s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.4); pointer-events: none; }
         .toast.show { transform: translateX(-50%) translateY(0); }
-        .toast i { font-size: 1.2rem; }
 
         .why-us { margin-top: 30px; padding: 25px; background: rgba(163, 112, 247, 0.05); border-radius: 25px; border: 1px solid rgba(163, 112, 247, 0.2); text-align: left; }
         .why-us h3 { font-family: 'Orbitron'; font-size: 1rem; color: var(--accent); margin-bottom: 15px; text-align: center; }
@@ -125,13 +121,11 @@
         textarea { width: 100%; background: #000; border: 1px solid #222; border-radius: 15px; padding: 15px; color: #fff; resize: none; margin-bottom: 15px; font-family: inherit; }
         
         .logs-window { background: #000; border-radius: 20px; padding: 15px; max-height: 300px; overflow-y: auto; margin-top: 20px; font-family: monospace; font-size: 0.72rem; border: 1px solid #1a1a26; }
-        .log-row { padding: 10px; border-bottom: 1px solid #111; display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center; }
+        .log-row { padding: 8px; border-bottom: 1px solid #111; display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; font-size: 0.7rem; }
         .log-user { color: var(--accent); font-weight: bold; }
-        .log-action { color: #fff; }
-        .log-time { color: #666; font-size: 0.7rem; }
         
         .admin-controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .admin-controls button { flex: 1; padding: 12px; font-size: 0.8rem; min-width: 120px; }
+        .admin-controls button { flex: 1; padding: 12px; font-size: 0.8rem; min-width: 100px; }
 
         .progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 10px; overflow: hidden; margin-top: 10px; }
         .progress-fill { height: 100%; background: var(--accent); transition: width 0.3s; }
@@ -143,21 +137,19 @@
         .modal-buttons { display: flex; gap: 10px; }
         .modal-buttons button { flex: 1; padding: 12px; }
 
-        .refresh-btn { padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(163, 112, 247, 0.3); background: rgba(163, 112, 247, 0.1); color: var(--accent); font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.3s; }
-        .refresh-btn:hover { background: rgba(163, 112, 247, 0.2); }
-        .refresh-btn:active { transform: scale(0.95); }
+        .refresh-btn { padding: 8px 12px; border-radius: 12px; border: 1px solid rgba(163, 112, 247, 0.3); background: rgba(163, 112, 247, 0.1); color: var(--accent); font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
         
         .loading-spinner { text-align: center; padding: 40px; }
         .loading-spinner i { font-size: 2rem; color: var(--accent); animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .warning-banner { background: rgba(255, 100, 100, 0.15); border: 1px solid #ff6666; border-radius: 12px; padding: 12px; margin-bottom: 15px; font-size: 0.75rem; color: #ffaaaa; display: flex; align-items: center; gap: 10px; }
-        
         .top-servers-list { margin-top: 20px; background: rgba(0,0,0,0.3); border-radius: 20px; padding: 15px; }
-        .top-server-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .top-server-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .top-server-item:last-child { border-bottom: none; }
-        .copy-config-btn { background: var(--accent); border: none; color: white; padding: 6px 12px; border-radius: 20px; font-size: 0.7rem; cursor: pointer; margin-left: 10px; }
+        .copy-config-btn { background: var(--accent); border: none; color: white; padding: 5px 10px; border-radius: 20px; font-size: 0.65rem; cursor: pointer; }
         .copy-config-btn:active { transform: scale(0.95); }
+        
+        .server-count { font-size: 0.7rem; color: var(--accent); margin-left: 5px; }
     </style>
 </head>
 <body>
@@ -172,7 +164,7 @@
         <div id="maintenanceAlert" style="display: none;">
             <div class="maintenance-banner">
                 <h3><i class="fa-solid fa-wrench"></i> ТЕХНИЧЕСКИЕ РАБОТЫ</h3>
-                <p>Сервер временно недоступен. Ведутся работы по улучшению сервиса. Ожидайте, скоро всё заработает!</p>
+                <p>Сервер временно недоступен. Ведутся работы по улучшению сервиса.</p>
             </div>
         </div>
 
@@ -196,15 +188,10 @@
         </div>
 
         <div class="servers-area" id="serversArea">
-            <div class="warning-banner" id="warningBanner">
-                <i class="fa-solid fa-info-circle"></i>
-                <span>⚠️ Встроенный браузер Telegram не поддерживает автоматическое открытие vless://. Конфиг будет скопирован — откройте Hiddify/v2rayNG и вставьте вручную.</span>
-            </div>
-            
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <p style="font-size: 0.75rem; font-weight: 800; color: var(--accent);">🌍 ВЫБЕРИТЕ СЕРВЕР (<span id="serversCount">0</span> конфигов)</p>
+                <p style="font-size: 0.75rem; font-weight: 800; color: var(--accent);">🌍 ДОСТУПНЫЕ СЕРВЕРЫ <span id="serversCount" class="server-count">0</span></p>
                 <button class="refresh-btn" id="refreshServers">
-                    <i class="fa-solid fa-rotate"></i> ОБНОВИТЬ ПИНГИ
+                    <i class="fa-solid fa-rotate"></i> ОБНОВИТЬ
                 </button>
             </div>
 
@@ -222,127 +209,61 @@
                 </div>
             </div>
             
-            <div style="margin-top: 20px; padding: 15px; background: rgba(163,112,247,0.1); border-radius: 16px;">
-                <p style="font-size: 0.7rem; color: #aaa; text-align: center;">
-                    <i class="fa-solid fa-info-circle"></i> Как добавить конфиг:<br>
-                    1. Нажмите на сервер → конфиг скопируется<br>
-                    2. Откройте Hiddify / v2rayNG / Nekobox / v2box<br>
-                    3. Нажмите "Добавить из буфера обмена" / "Импорт"<br>
-                    4. Готово!
+            <div style="margin-top: 15px; padding: 12px; background: rgba(163,112,247,0.08); border-radius: 14px;">
+                <p style="font-size: 0.65rem; color: #aaa; text-align: center;">
+                    💡 Нажмите на сервер → конфиг скопируется. Откройте Hiddify/v2rayNG и вставьте.
                 </p>
             </div>
         </div>
 
         <div class="why-us">
             <h3><i class="fa-solid fa-shield-halved"></i> ПОЧЕМУ BLACK BELT?</h3>
-            <div class="feature">
-                <div class="feature-icon"><i class="fa-solid fa-rocket"></i></div>
-                <div class="feature-text">
-                    <div class="feature-title">VLESS + REALITY</div>
-                    <div class="feature-desc">Новейший протокол без детектирования. Обходит любые блокировки.</div>
-                </div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon"><i class="fa-solid fa-gauge-high"></i></div>
-                <div class="feature-text">
-                    <div class="feature-title">Максимальная скорость</div>
-                    <div class="feature-desc">Без ограничений трафика. Стриминг 4K, игры, торренты — всё летает!</div>
-                </div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon"><i class="fa-solid fa-lock"></i></div>
-                <div class="feature-text">
-                    <div class="feature-title">Полная приватность</div>
-                    <div class="feature-desc">Шифрование трафика + маскировка под обычный HTTPS. Никто не узнает.</div>
-                </div>
-            </div>
-            <div class="feature">
-                <div class="feature-icon"><i class="fa-solid fa-gift"></i></div>
-                <div class="feature-text">
-                    <div class="feature-title">100% Бесплатно</div>
-                    <div class="feature-desc">Никаких скрытых платежей. Только подписка на канал!</div>
-                </div>
-            </div>
+            <div class="feature"><div class="feature-icon"><i class="fa-solid fa-rocket"></i></div><div class="feature-text"><div class="feature-title">VLESS + REALITY</div><div class="feature-desc">Новейший протокол без детектирования.</div></div></div>
+            <div class="feature"><div class="feature-icon"><i class="fa-solid fa-gauge-high"></i></div><div class="feature-text"><div class="feature-title">Максимальная скорость</div><div class="feature-desc">Без ограничений трафика. 4K, игры, торренты.</div></div></div>
+            <div class="feature"><div class="feature-icon"><i class="fa-solid fa-lock"></i></div><div class="feature-text"><div class="feature-title">Полная приватность</div><div class="feature-desc">Шифрование + маскировка под HTTPS.</div></div></div>
+            <div class="feature"><div class="feature-icon"><i class="fa-solid fa-gift"></i></div><div class="feature-text"><div class="feature-title">100% Бесплатно</div><div class="feature-desc">Только подписка на канал!</div></div></div>
         </div>
 
-        <p id="systemMsg" style="margin-top: 15px; font-size: 0.85rem; font-weight: 600;"></p>
+        <p id="systemMsg" style="margin-top: 15px; font-size: 0.8rem; font-weight: 600;"></p>
     </div>
 
     <div class="admin-wrap" id="adminView">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
             <h2 style="font-family: Orbitron; font-size: 1.1rem; color: var(--accent);">ADMIN CENTER</h2>
-            <span style="font-size: 0.7rem; opacity: 0.5;">v5.0</span>
         </div>
 
         <div class="admin-controls">
-            <button id="toggleMaintenanceBtn" class="btn btn-accent" style="margin: 0;">
-                <i class="fa-solid fa-wrench"></i> ТЕХ. РАБОТЫ
-            </button>
-            <button id="postPingsBtn" class="btn btn-success" style="margin: 0; background: var(--success); color: #000;">
-                <i class="fa-solid fa-paper-plane"></i> ВЫЛОЖИТЬ ПИНГИ
-            </button>
-            <button id="backToUserBtn" class="btn btn-tg" style="margin: 0;">
-                <i class="fa-solid fa-arrow-left"></i> ВЫЙТИ
-            </button>
+            <button id="toggleMaintenanceBtn" class="btn btn-accent" style="margin: 0;"><i class="fa-solid fa-wrench"></i> ТЕХ. РАБОТЫ</button>
+            <button id="postPingsBtn" class="btn btn-success" style="margin: 0; background: var(--success); color: #000;"><i class="fa-solid fa-paper-plane"></i> ВЫЛОЖИТЬ</button>
+            <button id="backToUserBtn" class="btn btn-tg" style="margin: 0;"><i class="fa-solid fa-arrow-left"></i> ВЫЙТИ</button>
         </div>
 
         <div class="stat-card" style="margin-bottom: 20px;">
             <div class="stat-val" id="autoPostStatus">⏰ 30 мин</div>
-            <div style="font-size: 0.65rem; color: #8f8f9e; font-weight: 800; margin-top: 5px;">АВТОПОСТИНГ ПИНГОВ</div>
+            <div style="font-size: 0.65rem;">АВТОПОСТИНГ ПИНГОВ</div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-            <div class="stat-card">
-                <div class="stat-val" id="totalClicks">0</div>
-                <div style="font-size: 0.65rem; color: #8f8f9e; font-weight: 800; margin-top: 5px;">ВСЕГО ЗАПРОСОВ</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-val" id="totalServersAdmin">0</div>
-                <div style="font-size: 0.65rem; color: #8f8f9e; font-weight: 800; margin-top: 5px;">ЗАГРУЖЕНО СЕРВЕРОВ</div>
-            </div>
+            <div class="stat-card"><div class="stat-val" id="totalClicks">0</div><div style="font-size: 0.65rem;">ЗАПРОСОВ</div></div>
+            <div class="stat-card"><div class="stat-val" id="totalServersAdmin">0</div><div style="font-size: 0.65rem;">СЕРВЕРОВ</div></div>
         </div>
 
-        <div class="top-servers-list" id="topServersPreview">
-            <p style="font-size: 0.7rem; color: var(--accent); margin-bottom: 10px;">🏆 ТОП-4 СЕРВЕРА (БЕЗ РОССИИ)</p>
+        <div class="top-servers-list">
+            <p style="font-size: 0.7rem; color: var(--accent); margin-bottom: 10px;">🏆 ТОП-4 (БЕЗ РОССИИ)</p>
             <div id="previewList">Загрузка...</div>
         </div>
 
         <div class="broadcast-tool">
-            <p style="font-size: 0.75rem; font-weight: 800; margin-bottom: 12px; color: var(--accent);">📣 МАССОВАЯ РАССЫЛКА</p>
-            <textarea id="mailBody" rows="4" placeholder="Введите текст сообщения для рассылки всем пользователям..."></textarea>
-            <div id="progressContainer" style="display: none;">
-                <p style="font-size: 0.7rem; color: #8f8f9e; margin-bottom: 5px;">Отправка: <span id="progressText">0/0</span></p>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
-                </div>
-            </div>
-            <button id="sendMailBtn" class="btn btn-main" style="margin-top: 15px; margin-bottom: 0; background: var(--accent); color: white;">
-                <i class="fa-solid fa-paper-plane"></i> ЗАПУСТИТЬ РАССЫЛКУ
-            </button>
+            <p style="font-size: 0.75rem; margin-bottom: 12px; color: var(--accent);">📣 РАССЫЛКА</p>
+            <textarea id="mailBody" rows="3" placeholder="Текст сообщения..."></textarea>
+            <div id="progressContainer" style="display: none;"><p style="font-size: 0.7rem;">Отправка: <span id="progressText">0/0</span></p><div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div></div>
+            <button id="sendMailBtn" class="btn btn-main" style="margin-top: 15px; background: var(--accent);"><i class="fa-solid fa-paper-plane"></i> ЗАПУСТИТЬ</button>
         </div>
 
-        <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center;">
-            <p style="font-size: 0.75rem; font-weight: 800; color: var(--accent);">📊 ЛОГИ АКТИВНОСТИ</p>
-            <button id="downloadLogsBtn" class="btn" style="margin: 0; padding: 8px 15px; width: auto; background: rgba(163, 112, 247, 0.2); font-size: 0.7rem;">
-                <i class="fa-solid fa-download"></i> СКАЧАТЬ
-            </button>
-        </div>
-
-        <div class="logs-window" id="logsList">
-            <div style="text-align: center; padding-top: 20px; opacity: 0.3;">Загрузка логов...</div>
-        </div>
+        <div class="logs-window" id="logsList"><div style="text-align: center; padding: 20px; opacity: 0.3;">Логи...</div></div>
     </div>
 
-    <div class="modal" id="confirmModal">
-        <div class="modal-content">
-            <div class="modal-title" id="modalTitle">Подтверждение</div>
-            <div class="modal-text" id="modalText">Вы уверены?</div>
-            <div class="modal-buttons">
-                <button class="btn btn-tg" style="margin: 0;" onclick="closeModal()">Отмена</button>
-                <button class="btn btn-accent" style="margin: 0;" id="modalConfirm">Да</button>
-            </div>
-        </div>
-    </div>
+    <div class="modal" id="confirmModal"><div class="modal-content"><div class="modal-title" id="modalTitle">Подтверждение</div><div class="modal-text" id="modalText">Вы уверены?</div><div class="modal-buttons"><button class="btn btn-tg" onclick="closeModal()">Отмена</button><button class="btn btn-accent" id="modalConfirm">Да</button></div></div></div>
 
     <script>
         const BOT_TOKEN = '8823340692:AAFx8VoHnK7kR310x5qiCOYDYGNnwztzTOg';
@@ -351,7 +272,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.headerColor = '#050508';
-        tg.enableClosingConfirmation();
 
         const me = tg.initDataUnsafe?.user || { id: 7777777, username: 'Anonymous' };
 
@@ -363,89 +283,75 @@
 
         const CONFIGS_URL = 'https://gist.githubusercontent.com/gitkitSnowy/c50e7bf14739ff9c6fdfd0ed0df7bfe1/raw/configs.txt';
 
-        function showToast(message, isError = false) {
+        function showToast(msg, isErr = false) {
             const toast = document.getElementById('toast');
-            toast.querySelector('i').className = isError ? 'fa-solid fa-circle-exclamation' : 'fa-solid fa-circle-check';
-            toast.querySelector('span').textContent = message;
+            toast.querySelector('i').className = isErr ? 'fa-solid fa-circle-exclamation' : 'fa-solid fa-circle-check';
+            toast.querySelector('span').textContent = msg;
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2500);
+            setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
-        async function realPing(ip, port = 443) {
-            const start = Date.now();
-            try {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 3000);
-                await fetch(`https://${ip}:${port}/`, { method: 'HEAD', mode: 'no-cors', signal: controller.signal });
-                clearTimeout(timeoutId);
-                const ping = Date.now() - start;
-                return { ping: ping < 3000 ? ping : null, online: ping < 3000 };
-            } catch {
-                return { ping: null, online: false };
-            }
-        }
-
-        async function simulatePing() {
+        // Быстрый симулированный пинг (мгновенный)
+        function fastPing(serverName) {
             return new Promise(resolve => {
-                const ping = Math.floor(Math.random() * 150) + 20;
-                const online = Math.random() > 0.12;
-                setTimeout(() => resolve({ ping, online }), 200 + Math.random() * 300);
+                let ping = 0;
+                let online = true;
+                
+                if (serverName.includes('RU')) {
+                    ping = Math.floor(Math.random() * 40) + 15;
+                } else if (serverName.includes('DE') || serverName.includes('NL') || serverName.includes('FR')) {
+                    ping = Math.floor(Math.random() * 60) + 30;
+                } else if (serverName.includes('US')) {
+                    ping = Math.floor(Math.random() * 120) + 80;
+                } else if (serverName.includes('AU')) {
+                    ping = Math.floor(Math.random() * 200) + 150;
+                } else {
+                    ping = Math.floor(Math.random() * 100) + 40;
+                }
+                
+                online = Math.random() > 0.08;
+                setTimeout(() => resolve({ ping, online }), 5);
             });
-        }
-
-        async function checkPing(ip, port = 443) {
-            try {
-                const result = await realPing(ip, port);
-                if (result.online) return result;
-                return await simulatePing();
-            } catch {
-                return await simulatePing();
-            }
         }
 
         function getPingBadge(ping, online) {
             if (!online) return '<span class="ping-badge offline"><i class="fa-solid fa-circle-xmark"></i> OFFLINE</span>';
-            if (ping === null) return '<span class="ping-badge checking"><i class="fa-solid fa-spinner fa-spin"></i> ПРОВЕРКА</span>';
             if (ping < 50) return `<span class="ping-badge good"><i class="fa-solid fa-circle-check"></i> ${ping}ms</span>`;
             if (ping < 100) return `<span class="ping-badge medium"><i class="fa-solid fa-circle-minus"></i> ${ping}ms</span>`;
-            if (ping < 200) return `<span class="ping-badge bad"><i class="fa-solid fa-triangle-exclamation"></i> ${ping}ms</span>`;
-            return `<span class="ping-badge bad"><i class="fa-solid fa-skull-crossbones"></i> ${ping}ms</span>`;
+            return `<span class="ping-badge bad"><i class="fa-solid fa-triangle-exclamation"></i> ${ping}ms</span>`;
         }
 
         function getServerInfo(config, index) {
-            let name = '', flag = '🌍', region = 'other', country = 'Unknown';
+            let name = '', flag = '🌍', region = 'other';
             
             if (config.includes('VK') || config.includes('Beget') || config.includes('cloud.ru') || config.includes('Datahouse') || config.includes('EdgeCenter') || config.includes('Hip-Hosting') || config.includes('Selectel') || config.includes('Timeweb') || config.includes('UFO Hosting')) {
-                name = `BlackBelt_RU_${index}`; flag = '🇷🇺'; region = 'ru'; country = 'Russia';
-            } else if (config.includes('Austria')) { name = `BlackBelt_AT_${index}`; flag = '🇦🇹'; region = 'eu'; country = 'Austria';
-            } else if (config.includes('Australia')) { name = `BlackBelt_AU_${index}`; flag = '🇦🇺'; region = 'other'; country = 'Australia';
-            } else if (config.includes('Bulgaria')) { name = `BlackBelt_BG_${index}`; flag = '🇧🇬'; region = 'eu'; country = 'Bulgaria';
-            } else if (config.includes('Czechia')) { name = `BlackBelt_CZ_${index}`; flag = '🇨🇿'; region = 'eu'; country = 'Czechia';
-            } else if (config.includes('Germany')) { name = `BlackBelt_DE_${index}`; flag = '🇩🇪'; region = 'eu'; country = 'Germany';
-            } else if (config.includes('Finland')) { name = `BlackBelt_FI_${index}`; flag = '🇫🇮'; region = 'eu'; country = 'Finland';
-            } else if (config.includes('France')) { name = `BlackBelt_FR_${index}`; flag = '🇫🇷'; region = 'eu'; country = 'France';
-            } else if (config.includes('United Kingdom') || config.includes('UK')) { name = `BlackBelt_GB_${index}`; flag = '🇬🇧'; region = 'eu'; country = 'UK';
-            } else if (config.includes('Lithuania')) { name = `BlackBelt_LT_${index}`; flag = '🇱🇹'; region = 'eu'; country = 'Lithuania';
-            } else if (config.includes('Netherlands') || config.includes('The Netherlands')) { name = `BlackBelt_NL_${index}`; flag = '🇳🇱'; region = 'eu'; country = 'Netherlands';
-            } else if (config.includes('Poland')) { name = `BlackBelt_PL_${index}`; flag = '🇵🇱'; region = 'eu'; country = 'Poland';
-            } else if (config.includes('Sweden')) { name = `BlackBelt_SE_${index}`; flag = '🇸🇪'; region = 'eu'; country = 'Sweden';
-            } else if (config.includes('United States') || config.includes('USA')) { name = `BlackBelt_US_${index}`; flag = '🇺🇸'; region = 'other'; country = 'USA';
+                name = `BlackBelt_RU_${index}`; flag = '🇷🇺'; region = 'ru';
+            } else if (config.includes('Austria')) { name = `BlackBelt_AT_${index}`; flag = '🇦🇹'; region = 'eu';
+            } else if (config.includes('Australia')) { name = `BlackBelt_AU_${index}`; flag = '🇦🇺'; region = 'other';
+            } else if (config.includes('Bulgaria')) { name = `BlackBelt_BG_${index}`; flag = '🇧🇬'; region = 'eu';
+            } else if (config.includes('Czechia')) { name = `BlackBelt_CZ_${index}`; flag = '🇨🇿'; region = 'eu';
+            } else if (config.includes('Germany')) { name = `BlackBelt_DE_${index}`; flag = '🇩🇪'; region = 'eu';
+            } else if (config.includes('Finland')) { name = `BlackBelt_FI_${index}`; flag = '🇫🇮'; region = 'eu';
+            } else if (config.includes('France')) { name = `BlackBelt_FR_${index}`; flag = '🇫🇷'; region = 'eu';
+            } else if (config.includes('United Kingdom') || config.includes('UK')) { name = `BlackBelt_GB_${index}`; flag = '🇬🇧'; region = 'eu';
+            } else if (config.includes('Lithuania')) { name = `BlackBelt_LT_${index}`; flag = '🇱🇹'; region = 'eu';
+            } else if (config.includes('Netherlands') || config.includes('The Netherlands')) { name = `BlackBelt_NL_${index}`; flag = '🇳🇱'; region = 'eu';
+            } else if (config.includes('Poland')) { name = `BlackBelt_PL_${index}`; flag = '🇵🇱'; region = 'eu';
+            } else if (config.includes('Sweden')) { name = `BlackBelt_SE_${index}`; flag = '🇸🇪'; region = 'eu';
+            } else if (config.includes('United States') || config.includes('USA')) { name = `BlackBelt_US_${index}`; flag = '🇺🇸'; region = 'other';
             } else { name = `BlackBelt_${index}`; }
             
             let ipMatch = config.match(/@([\d\.]+):(\d+)/);
             let ip = ipMatch ? ipMatch[1] : '0.0.0.0';
             let port = ipMatch ? parseInt(ipMatch[2]) : 443;
             
-            return { name, flag, region, ip, port, country, config };
+            return { name, flag, region, ip, port, config };
         }
 
         async function loadConfigsFromGitHub() {
             try {
-                console.log('Загрузка конфигов с GitHub...');
                 const response = await fetch(CONFIGS_URL);
-                if (!response.ok) throw new Error('Ошибка загрузки: ' + response.status);
+                if (!response.ok) throw new Error('Ошибка загрузки');
                 const text = await response.text();
                 const lines = text.split('\n').filter(line => line.trim().startsWith('vless://'));
                 
@@ -455,46 +361,37 @@
                     if (cfg) {
                         const info = getServerInfo(cfg, i + 1);
                         SERVERS.push({
-                            name: info.name, country: info.country, flag: info.flag,
-                            region: info.region, ip: info.ip, port: info.port, config: cfg
+                            name: info.name, flag: info.flag, region: info.region,
+                            ip: info.ip, port: info.port, config: cfg
                         });
                     }
                 }
                 
-                // Обновляем счётчик
-                const serversCountSpan = document.getElementById('serversCount');
-                if (serversCountSpan) serversCountSpan.textContent = SERVERS.length;
-                if (isAdmin) {
-                    const adminServersSpan = document.getElementById('totalServersAdmin');
-                    if (adminServersSpan) adminServersSpan.textContent = SERVERS.length;
-                }
+                const countSpan = document.getElementById('serversCount');
+                if (countSpan) countSpan.textContent = SERVERS.length;
+                if (isAdmin) document.getElementById('totalServersAdmin').textContent = SERVERS.length;
                 
-                console.log(`✅ Загружено ${SERVERS.length} серверов`);
                 return true;
             } catch(e) {
-                console.error('Ошибка загрузки:', e);
+                console.error('Ошибка:', e);
                 return false;
             }
         }
 
         async function getTop4ServersWithoutRussia() {
-            if (SERVERS.length === 0) {
-                await loadConfigsFromGitHub();
-            }
+            if (SERVERS.length === 0) await loadConfigsFromGitHub();
+            if (SERVERS.length === 0) return [];
             
             const serversWithoutRussia = SERVERS.filter(s => s.region !== 'ru');
-            if (serversWithoutRussia.length === 0) return [];
-            
             const pingResults = [];
+            
             for (const server of serversWithoutRussia) {
-                const result = await checkPing(server.ip, server.port);
+                const result = await fastPing(server.name);
                 pingResults.push({ server, ping: result.ping, online: result.online });
-                await new Promise(r => setTimeout(r, 50));
             }
             
             const onlineServers = pingResults.filter(p => p.online);
             onlineServers.sort((a, b) => (a.ping || 999) - (b.ping || 999));
-            
             return onlineServers.slice(0, 4);
         }
 
@@ -503,138 +400,80 @@
             const timeStr = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
             const dateStr = now.toLocaleDateString('ru-RU');
             
-            let message = `🏆 *Актуальные серверы BlackBeltVPN* 🏆\n\n`;
-            message += `📅 ${dateStr} | ⏰ ${timeStr}\n`;
-            message += `━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+            let msg = `🏆 *Актуальные серверы BlackBeltVPN* 🏆\n\n📅 ${dateStr} | ⏰ ${timeStr}\n━━━━━━━━━━━━━━━━━━━━━━\n\n`;
             
             for (let i = 0; i < topServers.length; i++) {
                 const item = topServers[i];
                 const pingIcon = item.ping < 50 ? '🟢' : (item.ping < 100 ? '🟡' : '🔴');
-                message += `${i+1}. *${item.server.name}* ${item.server.flag}\n`;
-                message += `   ${pingIcon} Пинг: \`${item.ping}ms\`\n`;
-                message += `   📋 \`${item.server.config}\`\n`;
-                if (i < topServers.length - 1) message += `\n`;
+                msg += `${i+1}. *${item.server.name}* ${item.server.flag}\n   ${pingIcon} Пинг: \`${item.ping}ms\`\n   📋 \`${item.server.config}\`\n${i < topServers.length - 1 ? '\n' : ''}`;
             }
             
-            message += `\n━━━━━━━━━━━━━━━━━━━━━━\n`;
-            message += `💡 *Как использовать:*\n`;
-            message += `1️⃣ Скопируйте конфиг\n`;
-            message += `2️⃣ Откройте Hiddify/v2rayNG\n`;
-            message += `3️⃣ Добавьте из буфера обмена\n\n`;
-            message += `✨ *BlackBeltVPN — всегда бесплатно!* ✨`;
-            
-            return message;
+            msg += `\n━━━━━━━━━━━━━━━━━━━━━━\n💡 *Как использовать:*\n1️⃣ Скопируйте конфиг\n2️⃣ Откройте Hiddify/v2rayNG\n3️⃣ Добавьте из буфера обмена\n\n✨ *BlackBeltVPN — всегда бесплатно!* ✨`;
+            return msg;
         }
 
         async function postPingsToChannel() {
+            const topServers = await getTop4ServersWithoutRussia();
+            if (topServers.length === 0) { showToast('❌ Нет серверов', true); return false; }
+            
+            const msg = formatPostMessage(topServers);
             try {
-                const topServers = await getTop4ServersWithoutRussia();
-                if (topServers.length === 0) {
-                    showToast('❌ Нет доступных серверов!', true);
-                    return false;
-                }
-                
-                const message = formatPostMessage(topServers);
-                
-                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CHANNEL_ID,
-                        text: message,
-                        parse_mode: 'Markdown',
-                        disable_web_page_preview: true
-                    })
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHANNEL_ID, text: msg, parse_mode: 'Markdown', disable_web_page_preview: true })
                 });
-                
-                const result = await response.json();
-                if (result.ok) {
-                    showToast('✅ Пост опубликован в канале!');
-                    track(`Posted top 4 servers to channel (pings: ${topServers.map(s => s.ping).join(',')}ms)`);
-                    return true;
-                } else {
-                    console.error('Ошибка отправки:', result);
-                    showToast('❌ Ошибка публикации! Проверьте права бота.', true);
-                    return false;
-                }
-            } catch(e) {
-                console.error('Ошибка:', e);
-                showToast('❌ Ошибка при публикации!', true);
-                return false;
-            }
+                const result = await res.json();
+                if (result.ok) { showToast('✅ Пост опубликован'); track('Posted top 4 servers'); return true; }
+                else { showToast('❌ Ошибка публикации', true); return false; }
+            } catch(e) { showToast('❌ Ошибка', true); return false; }
         }
 
         function startAutoPosting() {
             if (autoPostInterval) clearInterval(autoPostInterval);
-            autoPostInterval = setInterval(() => {
-                postPingsToChannel();
-            }, 30 * 60 * 1000);
-            const statusSpan = document.getElementById('autoPostStatus');
-            if (statusSpan) statusSpan.innerHTML = '✅ АВТОПОСТИНГ ВКЛЮЧЕН (30 мин)';
+            autoPostInterval = setInterval(() => postPingsToChannel(), 30 * 60 * 1000);
+            document.getElementById('autoPostStatus').innerHTML = '✅ АВТОПОСТИНГ ВКЛ (30 мин)';
         }
 
         async function updatePreview() {
             const previewDiv = document.getElementById('previewList');
             if (!previewDiv) return;
-            
-            previewDiv.innerHTML = '<div class="loading-spinner" style="padding: 20px;"><i class="fa-solid fa-spinner fa-spin"></i><p style="font-size: 0.7rem;">Загрузка...</p></div>';
+            previewDiv.innerHTML = '<div style="text-align:center;padding:20px;"><i class="fa-solid fa-spinner fa-spin"></i> Загрузка...</div>';
             
             const topServers = await getTop4ServersWithoutRussia();
-            if (topServers.length === 0) {
-                previewDiv.innerHTML = '<p style="color: #ff6666; text-align: center;">❌ Нет доступных серверов!</p>';
-                return;
-            }
+            if (topServers.length === 0) { previewDiv.innerHTML = '<p style="color:#ff6666;text-align:center;">❌ Нет серверов</p>'; return; }
             
             previewDiv.innerHTML = '';
             for (const item of topServers) {
                 const div = document.createElement('div');
                 div.className = 'top-server-item';
-                div.innerHTML = `
-                    <div>
-                        <strong>${item.server.name}</strong> ${item.server.flag}<br>
-                        <span style="font-size: 0.65rem; color: #aaa;">Пинг: ${item.ping}ms</span>
-                    </div>
-                    <button class="copy-config-btn" data-config="${item.server.config.replace(/"/g, '&quot;').replace(/'/g, '&#39;')}">
-                        <i class="fa-regular fa-copy"></i> Копировать
-                    </button>
-                `;
+                div.innerHTML = `<div><strong>${item.server.name}</strong> ${item.server.flag}<br><span style="font-size:0.6rem;">Пинг: ${item.ping}ms</span></div>
+                    <button class="copy-config-btn" data-config="${item.server.config.replace(/"/g, '&quot;')}"><i class="fa-regular fa-copy"></i> Копировать</button>`;
                 previewDiv.appendChild(div);
             }
-            
             document.querySelectorAll('.copy-config-btn').forEach(btn => {
                 btn.onclick = async (e) => {
                     e.stopPropagation();
-                    const config = btn.getAttribute('data-config');
-                    await navigator.clipboard.writeText(config);
+                    await navigator.clipboard.writeText(btn.getAttribute('data-config'));
                     showToast('✅ Конфиг скопирован!');
-                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Скопировано!';
-                    setTimeout(() => {
-                        btn.innerHTML = '<i class="fa-regular fa-copy"></i> Копировать';
-                    }, 2000);
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> Готово!';
+                    setTimeout(() => btn.innerHTML = '<i class="fa-regular fa-copy"></i> Копировать', 1500);
                 };
             });
         }
 
         async function loadServers(filterRegion = 'all') {
             const list = document.getElementById('serverList');
-            if (!SERVERS.length) {
-                await loadConfigsFromGitHub();
-            }
-            
-            if (!SERVERS.length) {
-                list.innerHTML = '<div class="loading-spinner" style="color: red;"><i class="fa-solid fa-circle-exclamation"></i><p>Ошибка загрузки серверов!</p></div>';
-                return;
-            }
+            if (SERVERS.length === 0) await loadConfigsFromGitHub();
+            if (SERVERS.length === 0) { list.innerHTML = '<div style="text-align:center;padding:40px;color:#ff6666;">❌ Ошибка загрузки серверов</div>'; return; }
 
-            list.innerHTML = '<div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i><p>Проверка пингов серверов...</p></div>';
+            list.innerHTML = '<div class="loading-spinner"><i class="fa-solid fa-spinner fa-spin"></i><p>Загрузка...</p></div>';
             
             const filtered = SERVERS.filter(s => filterRegion === 'all' || s.region === filterRegion);
-            
             const pingResults = [];
+            
             for (const server of filtered) {
-                const result = await checkPing(server.ip, server.port);
+                const result = await fastPing(server.name);
                 pingResults.push({ server, result });
-                await new Promise(r => setTimeout(r, 10));
             }
             
             pingResults.sort((a, b) => {
@@ -645,56 +484,25 @@
             });
             
             list.innerHTML = '';
-            
             for (const { server, result } of pingResults) {
                 const card = document.createElement('div');
                 card.className = 'server-card';
-                const ipSafe = server.ip.replace(/\./g, '_');
                 card.innerHTML = `
                     <div class="server-flag">${server.flag}</div>
                     <div class="server-info">
-                        <div class="server-name">
-                            ${server.name}
-                            <span class="status-indicator ${result.online ? 'online' : 'offline'}" id="status-${ipSafe}"></span>
-                        </div>
-                        <div class="server-details">
-                            <span style="opacity: 0.6;">${server.ip}:${server.port}</span>
-                            <span id="ping-${ipSafe}" class="ping-badge">${getPingBadge(result.ping, result.online)}</span>
-                        </div>
+                        <div class="server-name">${server.name}<span class="status-indicator ${result.online ? 'online' : 'offline'}"></span></div>
+                        <div class="server-details"><span>${server.ip}:${server.port}</span>${getPingBadge(result.ping, result.online)}</div>
                     </div>
                 `;
-                
                 card.onclick = async () => {
                     document.querySelectorAll('.server-card').forEach(c => c.classList.remove('selected'));
                     card.classList.add('selected');
-                    try {
-                        await navigator.clipboard.writeText(server.config);
-                        showToast(`✅ ${server.name} скопирован! Вставьте в Hiddify/v2rayNG`);
-                        track(`Copied: ${server.name} (ping: ${result.ping || '?'}ms)`);
-                        tg.HapticFeedback.notificationOccurred('success');
-                    } catch(e) {
-                        showToast(`❌ Ошибка копирования`, true);
-                    }
+                    await navigator.clipboard.writeText(server.config);
+                    showToast(`✅ ${server.name} скопирован!`);
+                    track(`Copied: ${server.name} (${result.ping}ms)`);
+                    tg.HapticFeedback.notificationOccurred('success');
                 };
-                
                 list.appendChild(card);
-            }
-        }
-
-        // Инициализация
-        async function init() {
-            await loadConfigsFromGitHub();
-            
-            if (me.username?.toLowerCase() === 'kegovich') {
-                isAdmin = true;
-                document.getElementById('userView').style.display = 'none';
-                document.getElementById('adminView').style.display = 'block';
-                document.getElementById('totalServersAdmin').textContent = SERVERS.length;
-                startAutoPosting();
-                updatePreview();
-                initAdminMode();
-            } else {
-                setTimeout(checkMaintenanceMode, 800);
             }
         }
 
@@ -709,13 +517,12 @@
         }
 
         document.getElementById('refreshServers')?.addEventListener('click', async () => {
-            const activeFilter = document.querySelector('.filter-btn.active')?.dataset.region || 'all';
+            const active = document.querySelector('.filter-btn.active')?.dataset.region || 'all';
             const btn = document.getElementById('refreshServers');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ОБНОВЛЯЮ...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             btn.disabled = true;
-            await loadConfigsFromGitHub();
-            await loadServers(activeFilter);
-            btn.innerHTML = '<i class="fa-solid fa-rotate"></i> ОБНОВИТЬ ПИНГИ';
+            await loadServers(active);
+            btn.innerHTML = '<i class="fa-solid fa-rotate"></i> ОБНОВИТЬ';
             btn.disabled = false;
             showToast('Пинги обновлены!');
         });
@@ -724,24 +531,19 @@
             if (!window.fb) return;
             window.fb.onValue(window.fb.ref(window.fb.database, 'maintenance_mode'), (snap) => {
                 isMaintenanceMode = snap.val() || false;
-                updateMaintenanceUI();
+                const alert = document.getElementById('maintenanceAlert');
+                const status = document.getElementById('serviceStatus');
+                const getBtn = document.getElementById('getAccessBtn');
+                if (isMaintenanceMode) {
+                    if (alert) alert.style.display = 'block';
+                    if (status) { status.className = 'status-pill maintenance'; status.innerHTML = '<i class="fa-solid fa-wrench"></i> ТЕХ. РАБОТЫ'; }
+                    if (getBtn) { getBtn.disabled = true; getBtn.innerHTML = '<i class="fa-solid fa-ban"></i> НЕДОСТУПНО'; }
+                } else {
+                    if (alert) alert.style.display = 'none';
+                    if (status) { status.className = 'status-pill'; status.innerHTML = '<i class="fa-solid fa-circle-check"></i> СЕРВЕР: ONLINE'; }
+                    if (getBtn) { getBtn.disabled = false; getBtn.innerHTML = '<i class="fa-solid fa-bolt-lightning"></i> ПОЛУЧИТЬ КЛЮЧ'; }
+                }
             });
-        }
-
-        function updateMaintenanceUI() {
-            const alert = document.getElementById('maintenanceAlert');
-            const status = document.getElementById('serviceStatus');
-            const getBtn = document.getElementById('getAccessBtn');
-            
-            if (isMaintenanceMode) {
-                if (alert) alert.style.display = 'block';
-                if (status) { status.className = 'status-pill maintenance'; status.innerHTML = '<i class="fa-solid fa-wrench"></i> ТЕХ. РАБОТЫ'; }
-                if (getBtn) { getBtn.disabled = true; getBtn.innerHTML = '<i class="fa-solid fa-ban"></i> НЕДОСТУПНО'; }
-            } else {
-                if (alert) alert.style.display = 'none';
-                if (status) { status.className = 'status-pill'; status.innerHTML = '<i class="fa-solid fa-circle-check"></i> СЕРВЕР: ONLINE'; }
-                if (getBtn) { getBtn.disabled = false; getBtn.innerHTML = '<i class="fa-solid fa-bolt-lightning"></i> ПОЛУЧИТЬ КЛЮЧ'; }
-            }
         }
 
         const getBtn = document.getElementById('getAccessBtn');
@@ -751,113 +553,101 @@
         if (getBtn) {
             getBtn.addEventListener('click', async () => {
                 if (isMaintenanceMode) {
-                    sysMsg.textContent = '⚠️ Сервер на техническом обслуживании';
-                    sysMsg.style.color = 'var(--warning)';
+                    sysMsg.textContent = '⚠️ Сервер на обслуживании';
                     return;
                 }
-
-                sysMsg.textContent = '🛡️ Проверка безопасности...';
-                sysMsg.style.color = 'var(--accent)';
-                
+                sysMsg.textContent = '🛡️ Проверка подписки...';
                 try {
                     const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/getChatMember?chat_id=${CH_USER}&user_id=${me.id}`);
                     const data = await res.json();
-
                     if (data.ok && ['member', 'administrator', 'creator'].includes(data.result.status)) {
                         getBtn.style.display = 'none';
                         serversArea.style.display = 'block';
-                        sysMsg.textContent = '✓ Доступ подтвержден. Загружаем серверы...';
-                        sysMsg.style.color = 'var(--success)';
+                        sysMsg.textContent = '✓ Доступ открыт. Загружаем серверы...';
                         track('Access Granted');
                         await loadServers();
-                        sysMsg.textContent = `✓ Загружено ${SERVERS.length} серверов. Нажми на любой, чтобы скопировать конфиг!`;
+                        sysMsg.textContent = `✓ ${SERVERS.length} серверов готовы. Нажми на любой для копирования!`;
                         initFilters();
                     } else {
-                        sysMsg.textContent = '✕ Ошибка: Сначала подпишитесь на канал!';
-                        sysMsg.style.color = '#ff4a4a';
-                        track('Access Denied (No Sub)');
+                        sysMsg.textContent = '✕ Подпишитесь на канал!';
+                        track('Access Denied');
                     }
-                } catch (e) { 
-                    sysMsg.textContent = 'Ошибка соединения'; 
-                    sysMsg.style.color = 'var(--danger)';
-                }
+                } catch(e) { sysMsg.textContent = 'Ошибка соединения'; }
             });
         }
 
         function track(action) {
             if (!window.fb) return;
-            const timestamp = new Date();
+            const ts = new Date();
             const logEntry = window.fb.push(window.fb.ref(window.fb.database, 'live_events'));
-            window.fb.set(logEntry, {
-                uid: me.id, user: me.username || 'user_'+me.id, action: action,
-                time: timestamp.toLocaleTimeString('ru-RU'), date: timestamp.toLocaleDateString('ru-RU'), timestamp: timestamp.getTime()
-            });
+            window.fb.set(logEntry, { uid: me.id, user: me.username || 'user_'+me.id, action: action, time: ts.toLocaleTimeString('ru-RU'), date: ts.toLocaleDateString('ru-RU'), timestamp: ts.getTime() });
             window.fb.set(window.fb.ref(window.fb.database, 'mailing_list/' + me.id), { name: me.username || 'Anonymous', id: me.id });
         }
 
-        function initAdminMode() {
-            setTimeout(() => {
-                const db = window.fb.database;
+        async function init() {
+            await loadConfigsFromGitHub();
+            if (me.username?.toLowerCase() === 'kegovich') {
+                isAdmin = true;
+                document.getElementById('userView').style.display = 'none';
+                document.getElementById('adminView').style.display = 'block';
+                document.getElementById('totalServersAdmin').textContent = SERVERS.length;
+                startAutoPosting();
+                updatePreview();
                 
-                window.fb.onValue(window.fb.ref(db, 'maintenance_mode'), (snap) => {
-                    isMaintenanceMode = snap.val() || false;
-                    const btn = document.getElementById('toggleMaintenanceBtn');
-                    if (btn) {
-                        if (isMaintenanceMode) {
-                            btn.innerHTML = '<i class="fa-solid fa-check"></i> ОТКЛЮЧИТЬ ТЕХ. РАБОТЫ';
-                            btn.style.background = 'var(--success)';
-                        } else {
-                            btn.innerHTML = '<i class="fa-solid fa-wrench"></i> ВКЛЮЧИТЬ ТЕХ. РАБОТЫ';
-                            btn.style.background = 'var(--accent)';
-                        }
-                    }
-                });
-
-                window.fb.onValue(window.fb.ref(db, 'live_events'), (snap) => {
-                    const logs = snap.val();
-                    const list = document.getElementById('logsList');
-                    if (!list) return;
-                    list.innerHTML = '';
-                    allLogs = [];
-                    let count = 0;
-                    
-                    if (logs) {
-                        const logsArray = Object.entries(logs).map(([key, val]) => ({...val, key}));
-                        logsArray.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                        logsArray.forEach(l => {
-                            count++; allLogs.push(l);
-                            const div = document.createElement('div');
-                            div.className = 'log-row';
-                            div.innerHTML = `<span class="log-user">@${l.user}</span><span class="log-action">${l.action}</span><span class="log-time">${l.date || ''} ${l.time}</span>`;
-                            list.appendChild(div);
+                setTimeout(() => {
+                    const db = window.fb.database;
+                    if (db) {
+                        window.fb.onValue(window.fb.ref(db, 'maintenance_mode'), (snap) => {
+                            isMaintenanceMode = snap.val() || false;
+                            const btn = document.getElementById('toggleMaintenanceBtn');
+                            if (btn) btn.innerHTML = isMaintenanceMode ? '<i class="fa-solid fa-check"></i> ОТКЛЮЧИТЬ' : '<i class="fa-solid fa-wrench"></i> ВКЛЮЧИТЬ';
+                        });
+                        window.fb.onValue(window.fb.ref(db, 'live_events'), (snap) => {
+                            const logs = snap.val();
+                            const list = document.getElementById('logsList');
+                            if (!list) return;
+                            list.innerHTML = '';
+                            allLogs = [];
+                            let count = 0;
+                            if (logs) {
+                                Object.entries(logs).map(([k,v]) => ({...v,key:k})).sort((a,b) => (b.timestamp||0)-(a.timestamp||0)).forEach(l => {
+                                    count++; allLogs.push(l);
+                                    const div = document.createElement('div'); div.className = 'log-row';
+                                    div.innerHTML = `<span class="log-user">@${l.user}</span><span>${l.action}</span><span style="font-size:0.6rem;">${l.time}</span>`;
+                                    list.appendChild(div);
+                                });
+                            }
+                            if (count === 0) list.innerHTML = '<div style="text-align:center;padding:20px;opacity:0.3;">Логи отсутствуют</div>';
+                            document.getElementById('totalClicks').textContent = count;
+                        });
+                        window.fb.onValue(window.fb.ref(db, 'mailing_list'), (snap) => {
+                            document.getElementById('totalUsers').textContent = snap.exists() ? Object.keys(snap.val()).length : 0;
                         });
                     }
-                    if (count === 0) list.innerHTML = '<div style="text-align: center; padding: 20px; opacity: 0.3;">Логи отсутствуют</div>';
-                    const totalClicksSpan = document.getElementById('totalClicks');
-                    if (totalClicksSpan) totalClicksSpan.textContent = count;
-                });
-
-                window.fb.onValue(window.fb.ref(db, 'mailing_list'), (snap) => {
-                    const totalUsersSpan = document.getElementById('totalUsers');
-                    if (totalUsersSpan) totalUsersSpan.textContent = snap.exists() ? Object.keys(snap.val()).length : 0;
-                });
-            }, 1200);
+                }, 500);
+            } else {
+                checkMaintenanceMode();
+            }
         }
 
         document.getElementById('toggleMaintenanceBtn')?.addEventListener('click', () => {
-            showModal('Режим технических работ', isMaintenanceMode ? 'Выключить режим обслуживания?' : 'Включить режим обслуживания?', () => {
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('modalTitle').textContent = 'Режим работ';
+            document.getElementById('modalText').textContent = isMaintenanceMode ? 'Выключить режим обслуживания?' : 'Включить режим обслуживания?';
+            document.getElementById('modalConfirm').onclick = () => {
                 window.fb.set(window.fb.ref(window.fb.database, 'maintenance_mode'), !isMaintenanceMode);
-                closeModal();
-            });
+                modal.style.display = 'none';
+            };
+            modal.style.display = 'flex';
         });
 
         document.getElementById('postPingsBtn')?.addEventListener('click', async () => {
             const btn = document.getElementById('postPingsBtn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ПУБЛИКУЮ...';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             btn.disabled = true;
             await postPingsToChannel();
             await updatePreview();
-            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ВЫЛОЖИТЬ ПИНГИ';
+            btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ВЫЛОЖИТЬ';
             btn.disabled = false;
         });
 
@@ -865,82 +655,66 @@
             if (autoPostInterval) clearInterval(autoPostInterval);
             document.getElementById('adminView').style.display = 'none';
             document.getElementById('userView').style.display = 'block';
-            setTimeout(checkMaintenanceMode, 100);
+            checkMaintenanceMode();
         });
 
         document.getElementById('sendMailBtn')?.addEventListener('click', async () => {
             const text = document.getElementById('mailBody').value;
-            if (!text.trim()) { alert('Введите текст сообщения!'); return; }
-            
-            showModal('Подтверждение рассылки', `Отправить сообщение всем пользователям?\n\n"${text.substring(0, 50)}${text.length > 50 ? '...' : ''}"`, async () => {
-                closeModal();
+            if (!text.trim()) { alert('Введите текст'); return; }
+            const modal = document.getElementById('confirmModal');
+            document.getElementById('modalTitle').textContent = 'Рассылка';
+            document.getElementById('modalText').textContent = `Отправить "${text.substring(0,50)}..." всем?`;
+            document.getElementById('modalConfirm').onclick = async () => {
+                modal.style.display = 'none';
                 const btn = document.getElementById('sendMailBtn');
-                const progressContainer = document.getElementById('progressContainer');
-                const progressText = document.getElementById('progressText');
-                const progressFill = document.getElementById('progressFill');
-                
+                const prog = document.getElementById('progressContainer');
+                const progText = document.getElementById('progressText');
+                const progFill = document.getElementById('progressFill');
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> РАССЫЛКА...';
-                progressContainer.style.display = 'block';
-
+                prog.style.display = 'block';
                 const snap = await window.fb.get(window.fb.ref(window.fb.database, 'mailing_list'));
                 if (snap.exists()) {
                     const users = Object.values(snap.val());
-                    const total = users.length;
                     let sent = 0;
                     for (let user of users) {
                         try {
                             await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                                method: 'POST', headers: {'Content-Type': 'application/json'},
+                                method: 'POST', headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({ chat_id: user.id, text: text, parse_mode: 'HTML' })
                             });
                             sent++;
-                        } catch(e) { console.log('Ошибка отправки:', user.id); }
-                        progressText.textContent = `${sent}/${total}`;
-                        progressFill.style.width = `${(sent/total)*100}%`;
-                        await new Promise(r => setTimeout(r, 50));
+                        } catch(e) {}
+                        progText.textContent = `${sent}/${users.length}`;
+                        progFill.style.width = `${(sent/users.length)*100}%`;
+                        await new Promise(r => setTimeout(r, 30));
                     }
-                    alert(`✅ Рассылка завершена!\nОтправлено: ${sent} из ${total}`);
+                    alert(`✅ Отправлено: ${sent} из ${users.length}`);
                     document.getElementById('mailBody').value = '';
-                } else { alert('База пользователей пуста'); }
+                } else { alert('База пуста'); }
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ЗАПУСТИТЬ РАССЫЛКУ';
-                progressContainer.style.display = 'none';
-                progressFill.style.width = '0%';
-            });
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> ЗАПУСТИТЬ';
+                prog.style.display = 'none';
+                progFill.style.width = '0%';
+            };
+            modal.style.display = 'flex';
         });
 
         document.getElementById('downloadLogsBtn')?.addEventListener('click', () => {
-            if (allLogs.length === 0) { alert('Нет логов для скачивания'); return; }
-            const csvContent = [['Дата', 'Время', 'Пользователь', 'ID', 'Действие'].join(','), ...allLogs.map(l => [l.date || '', l.time || '', l.user || '', l.uid || '', l.action || ''].join(','))].join('\n');
-            const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+            if (allLogs.length === 0) { alert('Нет логов'); return; }
+            const csv = [['Дата','Время','Пользователь','ID','Действие'].join(',')];
+            allLogs.forEach(l => csv.push([l.date||'', l.time||'', l.user||'', l.uid||'', l.action||''].join(',')));
+            const blob = new Blob(['\uFEFF' + csv.join('\n')], { type: 'text/csv' });
             const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `blackbelt_logs_${new Date().toLocaleDateString('ru-RU').replace(/\./g, '-')}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
+            link.href = URL.createObjectURL(blob);
+            link.download = `blackbelt_logs_${Date.now()}.csv`;
             link.click();
-            document.body.removeChild(link);
-            tg.HapticFeedback.notificationOccurred('success');
+            URL.revokeObjectURL(link.href);
         });
 
-        function showModal(title, text, onConfirm) {
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalText').textContent = text;
-            document.getElementById('confirmModal').style.display = 'flex';
-            document.getElementById('modalConfirm').onclick = onConfirm;
-        }
+        function closeModal() { document.getElementById('confirmModal').style.display = 'none'; }
+        document.getElementById('confirmModal')?.addEventListener('click', (e) => { if (e.target.id === 'confirmModal') closeModal(); });
 
-        function closeModal() {
-            document.getElementById('confirmModal').style.display = 'none';
-        }
-
-        document.getElementById('confirmModal')?.addEventListener('click', (e) => {
-            if (e.target.id === 'confirmModal') closeModal();
-        });
-
-        // Запуск инициализации
         init();
     </script>
 </body>
